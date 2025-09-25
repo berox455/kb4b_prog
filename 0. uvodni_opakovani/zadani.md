@@ -21,11 +21,11 @@ Vytvoř funkci, která na vstupu bere číslo. Následně vypíše všechny děl
 
  Např.
  - vstup: 5 "h"
- - výstup:
-    h
-    hh
-    hhh
-    hhhh
+ - výstup:<br>
+    h<br>
+    hh<br>
+    hhh<br>
+    hhhh<br>
     hhhhh
 
 ### Validátor rodného čísla:
