@@ -6,7 +6,7 @@ class Hod_minci_se_sazenim:
         self.account = account
 
 
-    def hod_minci():
+    def hod_minci(self):
         hod = random.choice([0,1])
 
         print("padlo:", end=" ")
@@ -34,7 +34,7 @@ class Hod_minci_se_sazenim:
             print("Tipni si (panna/orel):", end=" ")
             tip = input_check(input(), ["panna", "orel"])
 
-            if hod_minci() == tip:
+            if self.hod_minci() == tip:
                 print("Vyhravas ", money * 2, "!!", sep="")
                 self.change_account_money(money*2)
                 self.stav_uctu()
@@ -51,7 +51,7 @@ class Hod_minci_se_sazenim:
         self.account += money
 
 
-    def game():
+    def game(self):
         self.stav_uctu()
 
         self.gamble(input("Kolik ches vsadit? "))
