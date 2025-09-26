@@ -1,12 +1,17 @@
 import random
+import itertools
 
 
-class Hod_minci_se_sazenim:
+class Coin_throw_bets:
+    id_obj = itertools.count()
+
+
     def __init__(self, account):
+        self.id = next(Coin_throw_bets.id_obj)
         self.account = account
 
 
-    def hod_minci(self):
+    def Coin_throw(self):
         hod = random.choice([0,1])
 
         print("padlo:", end=" ")
@@ -31,19 +36,19 @@ class Hod_minci_se_sazenim:
             return
         else:
             self.change_account_money(-money)
-            print("Tipni si (panna/orel):", end=" ")
-            tip = input_check(input(), ["panna", "orel"])
+            print("tipni si (panna/orel):", end=" ")
+            bet = input_check(input(), ["panna", "orel"])
 
-            if self.hod_minci() == tip:
+            if self.Coin_throw() == bet:
                 print("Vyhravas ", money * 2, "!!", sep="")
                 self.change_account_money(money*2)
-                self.stav_uctu()
+                self.account_money()
             else:
                 print("Prohravas!!")
-                self.stav_uctu()
+                self.account_money()
 
 
-    def stav_uctu(self):
+    def account_money(self):
         print("Stav uctu:", self.account, "Kc")
 
 
@@ -52,7 +57,7 @@ class Hod_minci_se_sazenim:
 
 
     def game(self):
-        self.stav_uctu()
+        self.account_money()
 
         self.gamble(input("Kolik ches vsadit? "))
 
@@ -65,7 +70,7 @@ def input_check(user_input, choices):
         return user_input
 
 
-hm_hrac = Hod_minci_se_sazenim(100)
+hm_hrac = Coin_throw_bets(100)
 play_again = True
 
 while play_again:
