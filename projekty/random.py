@@ -80,7 +80,22 @@ class Coin_throw_bets:
 
 
 def input_check(message, choices):
-    print(message, "Vyber " + str(choices).strip("[]\"\'"), end=": ")
+    if message[-1] == "?":
+        print(message, "Vyber ", end="")
+    else:
+        print(message + ",", "Vyber ", end="")
+    if len(choices) == 1:
+        print(choices[0], end=": ")
+    elif len(choices) == 2:
+        print(choices[0] + ",", choices[1], end=": ")
+    else:
+        for choice in choices:
+            if choice == choices[0]:
+                print(choice, end=" ")
+            elif choice == choices[-1]:
+                print(choice, end=": ")
+            else:
+                print(", " + choice)
     user_input = input().lower()
     while user_input not in choices:
         print("bad input!!")
