@@ -1,6 +1,8 @@
 import random
 import itertools
 
+players = []
+
 
 class Coin_throw_bets:
     id_obj = itertools.count()
@@ -36,8 +38,7 @@ class Coin_throw_bets:
             return
         else:
             self.change_account_money(-money)
-            print("tipni si (panna/orel):", end=" ")
-            bet = input_check(input(), ["panna", "orel"])
+            bet = input_check("Tipni si", ["panna", "orel"])
 
             if self.Coin_throw() == bet:
                 print("Vyhravas ", money * 2, "!!", sep="")
@@ -56,28 +57,49 @@ class Coin_throw_bets:
         self.account += money
 
 
-    def game(self):
+    def engine(self):
         self.account_money()
-
         self.gamble(input("Kolik ches vsadit? "))
 
 
-def input_check(user_input, choices):
-    if (user_input).lower() not in choices:
-        print("bad input!!")
-        return
-    else:
-        return user_input
-
-
-hm_hrac = Coin_throw_bets(100)
-play_again = True
-
-while play_again:
-    hm_hrac.game()
-    if input_check(input("Hrat znovu [a/n]: "), ["a", "n"]) == "a":
+    def play(self):
         play_again = True
-    else:
-        play_again = False
+
+        while play_again:
+            if self.account < 1:
+                print("Nemas uz penize ani na gamble!!!\nUmiras na hlad!!")
+                return None
+            self.engine()
+            print("\n\n\n")
+            if input_check("Hrat znovu", ["a", "n"]) == "a":
+                play_again = True
+            else:
+                play_again = False
+
+            print("-----------------\n")
+
+
+def input_check(message, choices):
+    print(message, "Vyber " + str(choices).strip("[]\"\'"), end=": ")
+    user_input = input().lower()
+    while user_input not in choices:
+        print("bad input!!")
+        print(message, end=" ")
+        user_input = input().lower()
     
-    print("-----------------\n")
+    return user_input
+
+
+def account_creation():
+    choice = input_check("Co ches hrat?", ["hodminci"])
+
+    if choice == "hodminci":
+        players.append(Coin_throw_bets(100))
+
+
+def game():
+    account_creation()
+    players[0].play()
+
+
+game()
