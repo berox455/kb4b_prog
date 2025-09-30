@@ -72,12 +72,10 @@ class Coin_throw:
                 return None
             self.engine()
             print("\n\n\n")
-            if input_check("Hrat znovu hod minci?", ["a", "n"]) == "a":
-                play_again = True
-            else:
+            if input_check("Hrat znovu hod minci?", ["a", "n"]) != "a":
                 play_again = False
 
-            print("-----------------\n")
+        print("-----------------\n")
 
 
 class Dice_throw:
@@ -142,12 +140,72 @@ class Dice_throw:
             self.get_dice_sides()
             self.engine()
 
-            if input_check("Hrat znovu hod kostkou?", ["a", "n"]) == "a":
-                play_again = True
-            else:
+            if input_check("Hrat znovu hod kostkou?", ["a", "n"]) != "a":
                 play_again = False
 
-            print("-----------------\n")
+        print("-----------------\n")
+
+
+class Card_draw:
+    id_obj = itertools.count()
+    
+
+    def __init__(self):
+        self.id = next(Card_draw.id_obj)
+        self.deck = [
+            "♠A", "♠K", "♠Q", "♠J", "♠10", "♠9", "♠8", "♠7", "♠6", "♠5", "♠4", "♠3", "♠2",
+            "♥A", "♥K", "♥Q", "♥J", "♥10", "♥9", "♥8", "♥7", "♥6", "♥5", "♥4", "♥3", "♥2",
+            "♦A", "♦K", "♦Q", "♦J", "♦10", "♦9", "♦8", "♦7", "♦6", "♦5", "♦4", "♦3", "♦2",
+            "♣A", "♣K", "♣Q", "♣J", "♣10", "♣9", "♣8", "♣7", "♣6", "♣5", "♣4", "♣3", "♣2"
+            ]
+        self.hand = []
+
+
+    def c_draw(self):
+        if len(self.deck) >= 1:
+            card = random.choice(self.deck)
+            self.deck.remove(card)
+            self.hand.append(card)
+
+            return card
+        else:
+            return False
+
+
+    def engine(self):
+        card = self.c_draw()
+        if card == False:
+            return False
+        print("Vytahl jsi:", card)
+
+        if len(self.hand) < 2:  
+            print("V ruce:", self.hand[0])
+        else:
+            for card in self.hand:
+                if card != self.hand[-1]:
+                    print(card + ",", end=" ")
+                else:
+                    print(card)
+    
+
+    def play(self):
+        play_again = True
+        
+        input("Pro vygenerovani karty zmackni enter...")
+        while play_again and len(self.deck) > 0:
+            self.engine()
+
+            print("\n\n")
+
+            if len(self.deck) < 1:
+                print("Vycerpal jsi cely balicek karet!!!")
+                play_again = False
+                break
+
+            if input_check("Vygenerovat dalsi kartu?", ["a", "n"]) != "a":
+                play_again = False
+        
+        print("-----------------\n")
 
 
 def get_num(message):
@@ -169,16 +227,12 @@ def input_check(message, choices):
 
     if len(choices) == 1:
         print(choices[0], end=": ")
-    elif len(choices) == 2:
-        print(choices[0] + ",", choices[1], end=": ")
     else:
         for choice in choices:
-            if choice == choices[0]:
-                print(choice, end="")
-            elif choice == choices[-1]:
-                print(", " + choice, end=": ")
+            if choice != choices[-1]:
+                print(choice + ",", end=" ")
             else:
-                print(", " + choice, end="")
+                print(choice, end=": ")
     user_input = input().lower()
     while user_input not in choices:
         print("bad input!!")
@@ -189,12 +243,14 @@ def input_check(message, choices):
 
 
 def account_creation():
-    choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou"])
+    choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou", "genkarty"])
 
     if choice == "hodminci":
         players.append(Coin_throw(100))
     elif choice == "hodkostkou":
         players.append(Dice_throw())
+    elif choice == "genkarty":
+        players.append(Card_draw())
 
 def game():
     account_creation()
