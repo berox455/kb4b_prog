@@ -4,16 +4,16 @@ import itertools
 players = []
 
 
-class Coin_throw_bets:
+class Coin_throw:
     id_obj = itertools.count()
 
 
     def __init__(self, account):
-        self.id = next(Coin_throw_bets.id_obj)
+        self.id = next(Coin_throw.id_obj)
         self.account = account
 
 
-    def Coin_throw(self):
+    def c_throw(self):
         hod = random.choice([0,1])
 
         print("padlo:", end=" ")
@@ -40,7 +40,7 @@ class Coin_throw_bets:
             self.change_account_money(-money)
             bet = input_check("Tipni si", ["panna", "orel"])
 
-            if self.Coin_throw() == bet:
+            if self.c_throw() == bet:
                 print("Vyhravas ", money * 2, "!!", sep="")
                 self.change_account_money(money*2)
                 self.account_money()
@@ -79,6 +79,49 @@ class Coin_throw_bets:
             print("-----------------\n")
 
 
+class Dice_throw:
+    id_obj = itertools.count()
+
+    def __init__(self, dice_count = 1, dice_sides = 6):
+        self.id = next(Dice_throw.id_obj)
+        self.dice_count = dice_count
+        self.dice_sides = dice_sides
+
+    
+    def d_throw(self):
+        throws = []
+
+        for dice in self.dice_count:
+            throws.append(random.randrange(1, self.dice_sides, 1))
+
+        return throws
+
+
+    def play(self):
+        throws = self.d_throw()
+
+        if len(throws) < 2:
+            print("Hod:", throws[0])
+        else:
+            print("Hody:", end=" ")
+
+            for throw in throws:
+                print(throw, end=" ")
+
+            print("\nSoucet:", sum(throws))
+
+
+def get_num(message):
+    print(message, end=" ")
+    user_input = input()
+
+    while not user_input.isdigit():
+        print(message, end=" ")
+        user_input = input()
+
+    return user_input
+
+
 def input_check(message, choices):
     if message[-1] == "?":
         print(message, "Vyber ", end="")
@@ -109,7 +152,7 @@ def account_creation():
     choice = input_check("Co ches hrat?", ["hodminci"])
 
     if choice == "hodminci":
-        players.append(Coin_throw_bets(100))
+        players.append(Coin_throw(100))
 
 
 def game():
