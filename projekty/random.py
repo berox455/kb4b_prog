@@ -9,16 +9,17 @@ class Coin_throw:
 
 
     def __init__(self, account):
-        self.id = next(Coin_throw.id_obj)
-        self.account = account
+        self.id = next(Coin_throw.id_obj) #if I wanted to create it with more players
+        self.game_name = "coin_throw" #to tell games apart
+        self.account = account #how much money player has for gambling
 
 
     def c_throw(self):
-        hod = random.choice([0,1])
+        throw = random.choice([0,1])
 
         print("padlo:", end=" ")
 
-        if hod == 1:
+        if throw == 1:
             print("orel")
             return "orel"
         else:
@@ -71,7 +72,7 @@ class Coin_throw:
                 return None
             self.engine()
             print("\n\n\n")
-            if input_check("Hrat znovu", ["a", "n"]) == "a":
+            if input_check("Hrat znovu hod minci?", ["a", "n"]) == "a":
                 play_again = True
             else:
                 play_again = False
@@ -81,34 +82,72 @@ class Coin_throw:
 
 class Dice_throw:
     id_obj = itertools.count()
+    
 
-    def __init__(self, dice_count = 1, dice_sides = 6):
+    def __init__(self):
         self.id = next(Dice_throw.id_obj)
-        self.dice_count = dice_count
-        self.dice_sides = dice_sides
+        self.game_name = "dice_throw" #to tell games apart
+        self.dice_count = 1
+        self.dice_sides = 6
 
     
     def d_throw(self):
         throws = []
 
-        for dice in self.dice_count:
-            throws.append(random.randrange(1, self.dice_sides, 1))
+        for d in range(self.dice_count):
+            throws.append(random.randrange(1, self.dice_sides + 1, 1))
 
         return throws
+    
 
+    def get_dice_count(self):
+        dice_count = get_num("Zadej pocet kostek:")
+        while dice_count < 1:
+            dice_count = get_num("Zadej pocet kostek:")
 
-    def play(self):
+        self.dice_count = dice_count
+        
+
+    def get_dice_sides(self):
+        dice_sides = get_num("Zadej pocet sten kostky:")
+        while dice_sides < 1:
+            dice_sides = get_num("Zadej pocet sten kostky:")
+
+        self.dice_sides = dice_sides
+    
+
+    def engine(self):
         throws = self.d_throw()
+        th_n = len(throws) #number of throws
 
-        if len(throws) < 2:
+        if th_n < 2:
             print("Hod:", throws[0])
-        else:
+        elif th_n < 10001:
             print("Hody:", end=" ")
 
             for throw in throws:
                 print(throw, end=" ")
 
             print("\nSoucet:", sum(throws))
+
+        if len(throws) > 4:
+            print("Prumerna hozena hodnota:", round(sum(throws)/th_n, 2))
+
+
+    def play(self):
+        play_again = True
+
+        while play_again:
+            self.get_dice_count()
+            self.get_dice_sides()
+            self.engine()
+
+            if input_check("Hrat znovu hod kostkou?", ["a", "n"]) == "a":
+                play_again = True
+            else:
+                play_again = False
+
+            print("-----------------\n")
 
 
 def get_num(message):
@@ -119,7 +158,7 @@ def get_num(message):
         print(message, end=" ")
         user_input = input()
 
-    return user_input
+    return int(user_input)
 
 
 def input_check(message, choices):
@@ -127,6 +166,7 @@ def input_check(message, choices):
         print(message, "Vyber ", end="")
     else:
         print(message + ",", "Vyber ", end="")
+
     if len(choices) == 1:
         print(choices[0], end=": ")
     elif len(choices) == 2:
@@ -134,11 +174,11 @@ def input_check(message, choices):
     else:
         for choice in choices:
             if choice == choices[0]:
-                print(choice, end=" ")
+                print(choice, end="")
             elif choice == choices[-1]:
-                print(choice, end=": ")
+                print(", " + choice, end=": ")
             else:
-                print(", " + choice)
+                print(", " + choice, end="")
     user_input = input().lower()
     while user_input not in choices:
         print("bad input!!")
@@ -149,15 +189,18 @@ def input_check(message, choices):
 
 
 def account_creation():
-    choice = input_check("Co ches hrat?", ["hodminci"])
+    choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou"])
 
     if choice == "hodminci":
         players.append(Coin_throw(100))
-
+    elif choice == "hodkostkou":
+        players.append(Dice_throw())
 
 def game():
     account_creation()
     players[0].play()
+        
+    print("Diky za hrani!!")
 
 
 game()
