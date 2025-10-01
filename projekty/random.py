@@ -208,6 +208,21 @@ class Card_draw:
         print("-----------------\n")
 
 
+class Pasword_gen:
+    id_obj = itertools.count()
+
+
+    def __init__(self):
+        self.id = next(Pasword_gen.id_obj)
+        self.game_name = "password_gen"
+        self.pass_length = [7,12] #min, max
+        self.special_characters = ["!@#$%^&*().,-_=|;:/><"]
+        
+
+    
+    def 
+
+
 def get_num(message):
     print(message, end=" ")
     user_input = input()
