@@ -67,10 +67,10 @@ class Coin_throw:
         play_again = True
 
         while play_again:
+            self.engine()
             if self.account < 1:
                 print("Nemas uz penize ani na gamble!!!\nUmiras na hlad!!")
-                return None
-            self.engine()
+                break
             print("\n\n\n")
             if input_check("Hrat znovu hod minci?", ["a", "n"]) != "a":
                 play_again = False
@@ -220,6 +220,18 @@ def get_num(message):
 
 
 def input_check(message, choices):
+    message_choices_print(message, choices)
+
+    user_input = input().lower()
+    while user_input not in choices:
+        print("bad input!!")
+        message_choices_print(message, choices)
+        user_input = input().lower()
+    
+    return user_input
+
+
+def message_choices_print(message, choices):
     if message[-1] == "?":
         print(message, "Vyber ", end="")
     else:
@@ -233,13 +245,6 @@ def input_check(message, choices):
                 print(choice + ",", end=" ")
             else:
                 print(choice, end=": ")
-    user_input = input().lower()
-    while user_input not in choices:
-        print("bad input!!")
-        print(message, end=" ")
-        user_input = input().lower()
-    
-    return user_input
 
 
 def account_creation():
