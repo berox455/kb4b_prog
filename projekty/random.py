@@ -1,5 +1,6 @@
 import random
 import itertools
+import string
 
 players = []
 
@@ -208,19 +209,76 @@ class Card_draw:
         print("-----------------\n")
 
 
-class Pasword_gen:
+class Password_gen:
     id_obj = itertools.count()
 
 
-    def __init__(self):
-        self.id = next(Pasword_gen.id_obj)
+    def __init__(self, pass_length = [12,18]):
+        self.id = next(Password_gen.id_obj)
         self.game_name = "password_gen"
-        self.pass_length = [7,12] #min, max
-        self.special_characters = ["!@#$%^&*().,-_=|;:/><"]
-        
+        self.pass_length = pass_length #min, max
+        self.special_characters = list(string.punctuation)
+        self.numbers = list(string.digits )
+        self.password = ""
+        self.alphabet = list(string.ascii_letters)
+
+
+    def pass_check(self, password):
+        bool_sp_ch = False #if there's a special character in the password
+        bool_num = False #number
+        bool_uc = False #uppercase letter
+
+        check = bool_sp_ch and bool_num and bool_uc
+
+        alphabet_uc = list(string.ascii_uppercase)
+
+        for letter in password:
+            if letter in self.special_characters:
+                print("There's a special character!")
+                bool_sp_ch = True
+            if letter in self.numbers:
+                print("There's a number character!")
+                bool_num = True
+            if letter in alphabet_uc:
+                print("There's an uppercase character!")
+                bool_uc = True
+            check = bool_sp_ch and bool_num and bool_uc
+            if check:
+                break
+
+        print("Check:", check)
+        return check
 
     
-    def 
+    def generator(self):
+        beta_password = ""
+        while not self.pass_check(beta_password):
+            beta_password = ""
+            for i in range(random.randrange(self.pass_length[0], self.pass_length[1], step = 1)):
+                beta_password += random.choice(self.alphabet + self.special_characters + self.numbers)
+
+        self.password = beta_password
+
+    
+    def engine(self):
+        self.generator()
+        print("Vygenerovane heslo:", self.password)
+
+
+    
+    def play(self):
+        play_again = True
+
+        input("Pro vygenerovani hesla zmackni enter...")
+        while play_again:
+            self.engine()
+
+            print("\n\n")
+
+            if input_check("Vygenerovat dalsi heslo?", ["a", "n"]) != "a":
+                play_again = False
+        
+        print("-----------------\n")
 
 
 def get_num(message):
@@ -263,7 +321,7 @@ def message_choices_print(message, choices):
 
 
 def account_creation():
-    choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou", "genkarty"])
+    choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou", "genkarty", "genhesla"])
 
     if choice == "hodminci":
         players.append(Coin_throw(100))
@@ -271,6 +329,8 @@ def account_creation():
         players.append(Dice_throw())
     elif choice == "genkarty":
         players.append(Card_draw())
+    elif choice == "genhesla":
+        players.append(Password_gen())
 
 def game():
     account_creation()
