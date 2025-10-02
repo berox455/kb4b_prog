@@ -59,9 +59,9 @@ Vytáhl jsi: Srdce - 7
 ### 4. Generátor hesla
 - Vytvoř program, který vygeneruje náhodné heslo.  
 - Heslo musí:  
-  - mít délku 7–12 znaků,  
+  - mít délku 7–12 znaků, > změna na 12 - 18
   - obsahovat alespoň jedno číslo,  
-  - obsahovat alespoň jeden znak z množiny `. , - #`,  
+  - obsahovat alespoň jeden znak z množiny `. , - #`,  > změna na všechny speciální znaky
   - ostatní znaky budou písmena (malá/velká).  
 
 **Ukázka výstupu:**
