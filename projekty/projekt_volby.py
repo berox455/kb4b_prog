@@ -54,7 +54,14 @@ class Vote_simulator:
     def print_party_stats(self):
         for party in self.results:
             votes = self.results[party]
-            print("Strana:", party, "Pocet_hlasu:", votes, votes/self.voting_voters+"%")
+            percentage = round(votes/self.voting_voters*100, 2)
+            print("Strana:", party, end=" ")
+            if percentage > 5:
+                print("         Vstoupi do snemovny")
+            else:
+                print()
+
+            print("Pocet_hlasu: ", votes, "  ", percentage, "%", sep="")
 
 
     def gen_voter_chart(self):
@@ -67,8 +74,9 @@ class Vote_simulator:
 
     def play(self):
         self.add_noise()
+        self.gen_vv()
         self.simulation()
-        print_party_stats()
+        self.print_party_stats()
 
         return None
     
