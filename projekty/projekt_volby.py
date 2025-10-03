@@ -64,8 +64,10 @@ class Vote_simulator:
             print("Pocet_hlasu: ", votes, "  ", percentage, "%", sep="")
 
 
-    def gen_voter_chart(self):
-        return chart 
+    def print_voter_chart(self):
+        for party in self.results:
+            votes = self.results[party]
+            percentage = round(votes/self.voting_voters*100)
 
     
     def mandate_counter(self):
