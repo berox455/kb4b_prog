@@ -406,6 +406,7 @@ class Poker_sim(Card_draw):
         pair = False, None
         three = False, None #three of a kind
         four = False, None #four of a kind
+        flush = False, tph
 
         for card in tph:
             if card == tph[0]:
