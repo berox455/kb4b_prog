@@ -389,10 +389,11 @@ class Poker_sim(Card_draw):
 
     
     def check_poker_hand(self):
-        tph = self.table + self.hand #table plus hand
+        tph = (self.table + self.hand).sort(get_value()) #table plus hand
         pair = False, None
         three = False, None #three of a kind
         four = False, None #four of a kind
+        flush = False, tph
 
         for card in tph:
             if card == tph[0]:
