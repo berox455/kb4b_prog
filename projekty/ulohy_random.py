@@ -1,6 +1,7 @@
 import random
 import itertools
 import string
+import copy
 
 players = []
 
@@ -166,7 +167,6 @@ class Card_draw:
         if len(self.deck) >= 1:
             card = random.choice(self.deck)
             self.deck.remove(card)
-            self.hand.append(card)
 
             return card
         else:
@@ -175,6 +175,8 @@ class Card_draw:
 
     def engine(self):
         card = self.c_draw()
+        self.hand.append(card)
+
         if card == False:
             return False
         print("Vytahl jsi:", card)
@@ -202,7 +204,7 @@ class Card_draw:
                 print("Vycerpal jsi cely balicek karet!!!")
                 play_again = False
                 break
-
+    
             if input_check("Vygenerovat dalsi kartu?", ["a", "n"]) != "a":
                 play_again = False
         
@@ -281,11 +283,177 @@ class Password_gen:
         print("-----------------\n")
 
 
+class Guess_the_number:
+    id_obj = itertools.count()
+
+
+    def __init__(self):
+        self.id = next(Guess_the_number.id_obj)
+        self.gnumber_range = [1,100] #min max
+        self.gnumber = 0 #the number you're guessing
+        self.guesses = 0 #number of guesses you have until you've guessed the number
+
+
+    
+    def num_gen(self):
+        gnr = self.gnumber_range
+        self.gnumber = random.randrange(gnr[0], gnr[1])
+
+
+    def num_check(self, number):
+        gnr = self.gnumber_range
+        if number not in range(gnr[0], gnr[1]+1):
+            print("Cislo neni v hadacim rozmezi!!!")
+            return False
+        
+        return True
+
+
+    def num_guesser(self):
+        guess = get_num("Hadej cislo (1-100):")
+
+        while not self.num_check(guess):
+            guess = get_num("Hadej cislo (1-100):")
+
+        if guess == self.gnumber:
+            return True
+        elif guess > self.gnumber:
+            print("Moc vysoko!!")
+        elif guess < self.gnumber:
+            print("Moc nizko!!")
+
+        return False
+
+
+    def engine(self):
+        self.num_gen()
+        guessed = self.num_guesser()
+        self.guesses = 1
+        while not guessed:
+            self.guesses += 1
+            guessed = self.num_guesser()
+
+        print("Uhodl jsi!! Pocet pokusu:", self.guesses)
+
+    
+    def play(self):
+        play_again = True
+
+        while play_again:
+            self.engine()
+
+            print("\n\n")
+
+            if input_check("Hadat dalsi cislo?", ["a", "n"]) != "a":
+                play_again = False
+        
+        print("-----------------\n")
+
+
+class Poker_sim(Card_draw):
+    id_obj = itertools.count()
+
+
+    def __init__(self):
+        super().__init__()
+        self.id = next(Poker_sim.id_obj)
+        self.table = []
+
+    
+    def gen_table(self):
+        for i in range(2):
+            card = super().c_draw()
+            self.table.append(card)
+
+    
+    def gen_hand(self):
+        for i in range(3):
+            card = super().c_draw()
+            self.hand.append(card)
+    
+    def get_value(self, card):
+        facecard_value = {
+            "A":14,
+            "K":13,
+            "Q":12,
+            "J":11
+        }
+        value = card[1:]
+        if value in list("AKQJ"):
+            #print(card, type(facecard_value[value])) #debug
+            return facecard_value[value]
+        else:
+            #print(card, type(value)) #debug
+            return int(value)
+
+
+    
+    def check_poker_hand(self):
+        tph = self.table + self.hand #table plus hand
+        pair = False, None
+        three = False, None #three of a kind
+        four = False, None #four of a kind
+
+        for card in tph:
+            if card == tph[0]:
+                most_value = [card]
+            elif self.get_value(card) > self.get_value(most_value[0]):
+                most_value = [card]
+            elif self.get_value(card) == self.get_value(most_value[0]):
+                most_value.append(card)
+                if len(most_value) == 2:
+                    pair = True, most_value.copy()
+                elif len(most_value) == 3:
+                    three = True, most_value.copy()
+                elif len(most_value) == 4:
+                    four = True, most_value.copy()
+
+        
+        if len(most_value) < 2:
+            print("Nejvyssi karta:", most_value[0])
+        else:
+            print("Nejvyssi karty:", end=" ")
+            for card in most_value:
+                print(card, end=" ")
+            print()
+
+        if pair[0]:
+            print("Par:", end=" ")
+            self.print_cards(pair[1])
+        if three[0]:
+            print("Trojice:", end=" ")
+            self.print_cards(three[1])
+        if four[0]:
+            print("Ctverice:", end=" ")
+            self.print_cards(four[1])
+            return False #debug
+
+        return True
+
+    
+    def print_cards(self, cards):
+        for card in cards:
+            print(card, end=" ")
+        
+        print()
+            
+    
+    def play(self):
+        self.gen_table()
+        self.gen_hand()
+        print("Na stole:", self.table) #debug
+        print("V ruce:", self.hand) #debug
+
+        if self.check_poker_hand() is False:
+            return False
+
+
 def get_num(message):
     print(message, end=" ")
     user_input = input()
 
     while not user_input.isdigit():
+        print("bad input!!")
         print(message, end=" ")
         user_input = input()
 
@@ -320,8 +488,11 @@ def message_choices_print(message, choices):
                 print(choice, end=": ")
 
 
-def account_creation():
-    choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou", "genkarty", "genhesla"])
+def account_creation(debug = False, debug_game = None):
+    if debug:
+        choice = debug_game
+    else:
+        choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou", "genkarty", "genhesla", "hadejcislo", "simpokru", "nechcihrat"])
 
     if choice == "hodminci":
         players.append(Coin_throw(100))
@@ -331,12 +502,28 @@ def account_creation():
         players.append(Card_draw())
     elif choice == "genhesla":
         players.append(Password_gen())
+    elif choice == "hadejcislo":
+        players.append(Guess_the_number())
+    elif choice == "simpokru":
+        players.append(Poker_sim())
+
+
+    else:
+        return False
+
+    return True
+
 
 def game():
-    account_creation()
-    players[0].play()
+    go = account_creation(True, "simpokru") #debug
+    i = 0
+
+    while go:
+        if players[i].play() is False:
+            break
+        go = account_creation(True, "simpokru") #debug
+        i += 1
         
     print("Diky za hrani!!")
-
 
 game()
