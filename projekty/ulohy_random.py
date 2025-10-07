@@ -390,11 +390,12 @@ class Poker_sim(Card_draw):
     
     def check_poker_hand(self):
         tph = self.table + self.hand #table plus hand
-        tph = sorted(tph, key=self.get_value, reverse=True) #sort by value
+        tph = sorted(tph, key=self.get_value) #sort by value
         pair = False, None
         three = False, None #three of a kind
         four = False, None #four of a kind
         flush = True, tph
+        straight = False, tph
 
         for card in tph:
             if card == tph[0]:
@@ -410,7 +411,9 @@ class Poker_sim(Card_draw):
                 elif len(most_value) == 4:
                     four = True, most_value.copy()
 
-        if not pair[0] or not three[0] or not four[0]:
+        tph = sorted(tph, key=self.get_value, reverse=True)
+
+        if not pair[0] or not three[0] or not four[0] and len(tph) == 5:
             i = 1
             for card in tph:
                 if i == len(tph):
@@ -420,9 +423,26 @@ class Poker_sim(Card_draw):
                     flush = False, tph
                     break
                 i += 1
+
+            straight_cards = 1
+            j = 1
+            for card in tph:
+                if j == len(tph):
+                    break
+                card1 = self.get_value(card)
+                card2 = self.get_value(tph[j])
+                #print(card, "postupka", tph[j], card1 == card2 + 1) #debug
+                if card1 == card2 + 1:
+                    straight_cards += 1
+                else:
+                    straight_cards = 1
+                j += 1
+
+            if straight_cards >= 5:
+                straight = True, tph
         else:
             flush = False, tph
-
+            straight = False, tph
         
         if len(most_value) < 2:
             print("Nejvyssi karta:", most_value[0])
@@ -444,6 +464,9 @@ class Poker_sim(Card_draw):
         if flush[0]:
             print("Barva:", end=" ")
             self.print_cards(flush[1])
+        if straight[0]:
+            print("Postupka:", end=" ")
+            self.print_cards(straight[1])
             return False #debug
 
         return True
