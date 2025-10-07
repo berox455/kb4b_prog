@@ -432,10 +432,12 @@ class Poker_sim(Card_draw):
 
         n_straight_cards = 1
         j = 1
+        tph_value = 0
         for card in tph:
+            card1 = self.get_value(card)
+            tph_value += card1
             if j == len(tph):
                 break
-            card1 = self.get_value(card)
             card2 = self.get_value(tph[j])
             #print(card, "postupka", tph[j], card1 == card2 + 1) #debug
             if card1 == card2 + 1:
@@ -446,6 +448,16 @@ class Poker_sim(Card_draw):
 
         if n_straight_cards >= 5:
             straight = True, tph
+        elif tph_value == 28 and self.get_value(tph[0]) == 14:
+            k = 2
+            for card in tph[1:]:
+                if k == len(tph):
+                    straight = True, tph[1:] + tph[0]
+                    break
+                card1 = self.get_value(card)
+                card2 = self.get_value(tph[k])
+                if card1 != card2 + 1:
+                    break
         
         return flush, straight
 
@@ -459,8 +471,6 @@ class Poker_sim(Card_draw):
         three = hptf[2]
         four = hptf[3]
             
-
-
         if not pair[0] or not three[0] or not four[0] and len(tph) == 5:
             fs = self.flush_straight(tph)
             flush = fs[0]
@@ -477,9 +487,7 @@ class Poker_sim(Card_draw):
             print("Nejvyssi karta:", most_value[0])
         else:
             print("Nejvyssi karty:", end=" ")
-            for card in most_value:
-                print(card, end=" ")
-            print()
+            self.print_cards(most_value)
 
         if pair[0]:
             print("Par:", end=" ")
