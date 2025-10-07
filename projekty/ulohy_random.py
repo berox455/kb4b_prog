@@ -412,11 +412,46 @@ class Poker_sim(Card_draw):
 
         return most_value, pair, three, four
 
+
+    def flush_straight(self, tph):
+        #checks for flush and straight
+        #returns list of lists: [flush_bool, flush_cards], [straight_bool, straight_cards]
+        tph = sorted(tph, key=self.get_value, reverse=True) #sorted by value high to low
+        flush = True, tph
+        straight = False, tph
+
+        i = 1
+        for card in tph:
+            if i == len(tph):
+                break
+            card2 = tph[i]
+            if card[0] != card2[0]:
+                flush = False, tph
+                break
+            i += 1
+
+        n_straight_cards = 1
+        j = 1
+        for card in tph:
+            if j == len(tph):
+                break
+            card1 = self.get_value(card)
+            card2 = self.get_value(tph[j])
+            #print(card, "postupka", tph[j], card1 == card2 + 1) #debug
+            if card1 == card2 + 1:
+                n_straight_cards += 1
+            else:
+                n_straight_cards = 1
+            j += 1
+
+        if n_straight_cards >= 5:
+            straight = True, tph
+        
+        return flush, straight
+
     
     def check_poker_hand(self):
         tph = self.table + self.hand #table plus hand
-        flush = True, tph
-        straight = False, tph
 
         hptf = self.hc_pair_three_four(tph)
         most_value = hptf[0]
@@ -425,35 +460,15 @@ class Poker_sim(Card_draw):
         four = hptf[3]
             
 
-        tph = sorted(tph, key=self.get_value, reverse=True) #sorted by value high to low
 
         if not pair[0] or not three[0] or not four[0] and len(tph) == 5:
-            i = 1
-            for card in tph:
-                if i == len(tph):
-                    break
-                card2 = tph[i]
-                if card[0] != card2[0]:
-                    flush = False, tph
-                    break
-                i += 1
-
-            straight_cards = 1
-            j = 1
-            for card in tph:
-                if j == len(tph):
-                    break
-                card1 = self.get_value(card)
-                card2 = self.get_value(tph[j])
-                #print(card, "postupka", tph[j], card1 == card2 + 1) #debug
-                if card1 == card2 + 1:
-                    straight_cards += 1
-                else:
-                    straight_cards = 1
-                j += 1
-
-            if straight_cards >= 5:
-                straight = True, tph
+            fs = self.flush_straight(tph)
+            flush = fs[0]
+            straight = fs[1]
+        elif len(tph) > 5:
+            fs = self.flush_straight(tph)
+            flush = fs[0]
+            straight = fs[1]
         else:
             flush = False, tph
             straight = False, tph
