@@ -370,6 +370,7 @@ class Poker_sim(Card_draw):
         for i in range(3):
             card = super().c_draw()
             self.hand.append(card)
+
     
     def get_value(self, card):
         facecard_value = {
@@ -377,7 +378,7 @@ class Poker_sim(Card_draw):
             "K":13,
             "Q":12,
             "J":11
-        }
+        }            
         value = card[1:]
         if value in list("AKQJ"):
             #print(card, type(facecard_value[value])) #debug
@@ -386,14 +387,14 @@ class Poker_sim(Card_draw):
             #print(card, type(value)) #debug
             return int(value)
 
-
     
     def check_poker_hand(self):
-        tph = (self.table + self.hand).sort(get_value()) #table plus hand
+        tph = self.table + self.hand #table plus hand
+        tph = sorted(tph, key=self.get_value, reverse=True) #sort by value
         pair = False, None
         three = False, None #three of a kind
         four = False, None #four of a kind
-        flush = False, tph
+        flush = True, tph
 
         for card in tph:
             if card == tph[0]:
@@ -408,6 +409,19 @@ class Poker_sim(Card_draw):
                     three = True, most_value.copy()
                 elif len(most_value) == 4:
                     four = True, most_value.copy()
+
+        if not pair[0] or not three[0] or not four[0]:
+            i = 1
+            for card in tph:
+                if i == len(tph):
+                    break
+                card2 = tph[i]
+                if card[0] != card2[0]:
+                    flush = False, tph
+                    break
+                i += 1
+        else:
+            flush = False, tph
 
         
         if len(most_value) < 2:
@@ -427,6 +441,9 @@ class Poker_sim(Card_draw):
         if four[0]:
             print("Ctverice:", end=" ")
             self.print_cards(four[1])
+        if flush[0]:
+            print("Barva:", end=" ")
+            self.print_cards(flush[1])
             return False #debug
 
         return True
