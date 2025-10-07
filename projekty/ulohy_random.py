@@ -387,15 +387,14 @@ class Poker_sim(Card_draw):
             #print(card, type(value)) #debug
             return int(value)
 
-    
-    def check_poker_hand(self):
-        tph = self.table + self.hand #table plus hand
-        tph = sorted(tph, key=self.get_value) #sort by value
+
+    def hc_pair_three_four(self, tph): 
+    #checks for high card, pair three of a kind and four of a kind, needs a list of cards available (tph)
+    #returns a list of lists: [most_value_cards],  [pair_bool, pair_cards], three, four (devided like pair)
+        tph = sorted(tph, key=self.get_value) #sort by value low to high
         pair = False, None
         three = False, None #three of a kind
         four = False, None #four of a kind
-        flush = True, tph
-        straight = False, tph
 
         for card in tph:
             if card == tph[0]:
@@ -411,7 +410,22 @@ class Poker_sim(Card_draw):
                 elif len(most_value) == 4:
                     four = True, most_value.copy()
 
-        tph = sorted(tph, key=self.get_value, reverse=True)
+        return most_value, pair, three, four
+
+    
+    def check_poker_hand(self):
+        tph = self.table + self.hand #table plus hand
+        flush = True, tph
+        straight = False, tph
+
+        hptf = self.hc_pair_three_four(tph)
+        most_value = hptf[0]
+        pair = hptf[1]
+        three = hptf[2]
+        four = hptf[3]
+            
+
+        tph = sorted(tph, key=self.get_value, reverse=True) #sorted by value high to low
 
         if not pair[0] or not three[0] or not four[0] and len(tph) == 5:
             i = 1
