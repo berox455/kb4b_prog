@@ -362,13 +362,15 @@ class Poker_sim(Card_draw):
 
     
     def gen_table(self):
-        for i in range(2):
+        self.table = []
+        for i in range(3):
             card = super().c_draw()
             self.table.append(card)
 
     
     def gen_hand(self):
-        for i in range(3):
+        self.hand = []
+        for i in range(2):
             card = super().c_draw()
             self.hand.append(card)
 
@@ -382,10 +384,8 @@ class Poker_sim(Card_draw):
         }            
         value = card[1:]
         if value in list("AKQJ"):
-            #print(card, type(facecard_value[value])) #debug
             return facecard_value[value]
         else:
-            #print(card, type(value)) #debug
             return int(value)
 
     
@@ -449,7 +449,6 @@ class Poker_sim(Card_draw):
             if j == len(tph):
                 break
             card2 = self.get_value(tph[j])
-            #print(card, "postupka", tph[j], card1 == card2 + 1) #debug
             if card1 == card2 + 1:
                 n_straight_cards += 1
             else:
@@ -556,11 +555,10 @@ class Poker_sim(Card_draw):
             fs = self.flush_straight(tph)
             flush = fs[0]
             straight = fs[1]
-        elif len(tph) > 5:
+        elif pair[0] or len(tph) > 5:
             fs = self.flush_straight(tph)
             flush = fs[0]
             straight = fs[1]
-        elif pair[0]:
             fhtp = self.fullhouse_twopair(tph)
             fullhouse = fhtp[0]
             twopair = fhtp[1]
@@ -600,7 +598,6 @@ class Poker_sim(Card_draw):
         if royalflush[0]:
             print("Kralovska postupka:", end=" ")
             self.print_cards(royalflush[1])
-            return False #debug
 
         return True
 
@@ -612,31 +609,45 @@ class Poker_sim(Card_draw):
         print()
 
     def print_table(self):
-        for i in range(len(self.table)*2 + 3):
+        j = str((self.table)).replace("\'", "")
+        j = j.replace(", ", "")
+        j = j.strip("y[]")
+        lj = (len(j)) + len(self.table) + 1
+        for i in range(lj):
             print("_", end="")
 
         print("\n ", end="")
         self.print_cards(self.table)
 
-        for i in range(len(self.table)* 2 + 3):
+        for i in range(lj):
             print("_", end="")
         
         print()
 
     
-    def play(self):
-        self.gen_table()
-        self.gen_hand()
-        
-        #print("Na stole:", end=" ")
+    def engine(self):
         self.print_table()
         print("\nV ruce:", end=" ")
         self.print_cards(sorted(self.hand, key=self.get_value, reverse=True))
-        print("\n_____________________________")
+        print("\n___________________________________")
+        self.check_poker_hand()
 
-        if self.check_poker_hand() is False:
-            return False
-        #input("...") #debug
+
+    def play(self):
+        self.gen_table()
+        self.gen_hand()
+        self.engine()
+        add_card = input_check("\n\nOtocit kartu na stole?", ["a", "n"])
+        
+        while add_card == "a":
+            self.table.append(super().c_draw())
+            self.engine()
+            if len(self.table) == 5:
+                print("Vsechny karty na stole jsou otoceny")
+                break
+            add_card = input_check("\n\nOtocit kartu na stole?", ["a", "n"])
+            
+        print("-----------------------------------\n")
 
 
 def get_num(message):
@@ -712,7 +723,7 @@ def game():
     while go:
         if players[i].play() is False:
             break
-        go = account_creation(True, "simpokru") #debug
+        go = account_creation()#True, "simpokru") #debug
         i += 1
         
     print("Diky za hrani!!")
