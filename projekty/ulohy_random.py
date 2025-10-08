@@ -513,6 +513,19 @@ class Poker_sim(Card_draw):
         return fullhouse, twopair
 
     
+    def straightflush(self, tph):
+    #checks for straightflushes
+        fs = self.flush_straight(tph)
+        flush = fs[0]
+        straight = fs[1]
+
+        if flush[0] and straight[0]:
+            return True, straight[1]
+        else:
+            return False, tph
+
+
+    
     def check_poker_hand(self):
         tph = self.table + self.hand #table plus hand
 
@@ -525,6 +538,7 @@ class Poker_sim(Card_draw):
         fullhouse = False, tph
         flush = False, tph
         straight = False, tph
+        straightflush = self.straightflush(tph)
             
         if not pair[0] and len(tph) == 5:
             fs = self.flush_straight(tph)
@@ -562,7 +576,10 @@ class Poker_sim(Card_draw):
         if four[0]:
             print("Ctverice:", end=" ")
             self.print_cards(four[1])
-            #return False #debug
+        if straightflush[0]:
+            print("Cista postupka:", end=" ")
+            self.print_cards(straightflush[1])
+            return False #debug
 
         return True
 
@@ -598,7 +615,7 @@ class Poker_sim(Card_draw):
 
         if self.check_poker_hand() is False:
             return False
-        input("...") #debug
+        #input("...") #debug
 
 
 def get_num(message):
