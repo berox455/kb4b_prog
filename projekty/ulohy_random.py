@@ -524,6 +524,17 @@ class Poker_sim(Card_draw):
         else:
             return False, tph
 
+    
+    def royalflush(self, tph):
+    #checks for royalflushes
+        sf = self.straightflush(tph)
+        cards = sf[1]
+
+        if sf[0] and self.get_value(cards[0]) == 14:
+            return True, cards
+        else:
+            return False, tph
+
 
     
     def check_poker_hand(self):
@@ -538,7 +549,8 @@ class Poker_sim(Card_draw):
         fullhouse = False, tph
         flush = False, tph
         straight = False, tph
-        straightflush = self.straightflush(tph)
+        straightflush = False, tph
+        royalflush = False, tph
             
         if not pair[0] and len(tph) == 5:
             fs = self.flush_straight(tph)
@@ -552,6 +564,12 @@ class Poker_sim(Card_draw):
             fhtp = self.fullhouse_twopair(tph)
             fullhouse = fhtp[0]
             twopair = fhtp[1]
+
+        if straight[0]:
+            straightflush = self.straightflush(tph)
+            if straightflush[0]:
+                royalflush = self.royalflush(tph)
+            
             
         
         print("Nejvyssi karta:", most_value[0])
@@ -579,6 +597,9 @@ class Poker_sim(Card_draw):
         if straightflush[0]:
             print("Cista postupka:", end=" ")
             self.print_cards(straightflush[1])
+        if royalflush[0]:
+            print("Kralovska postupka:", end=" ")
+            self.print_cards(royalflush[1])
             return False #debug
 
         return True
