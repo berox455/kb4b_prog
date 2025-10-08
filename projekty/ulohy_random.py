@@ -388,6 +388,15 @@ class Poker_sim(Card_draw):
             #print(card, type(value)) #debug
             return int(value)
 
+    
+    def get_list_value(self, clist):
+        vlist = []
+
+        for card in clist:
+            vlist.append(self.get_value(card))
+
+        return vlist
+
 
     def hc_pair_three_four(self, tph): 
     #checks for high card, pair three of a kind and four of a kind, needs a list of cards available (tph)
@@ -465,6 +474,43 @@ class Poker_sim(Card_draw):
 
 
     def fullhouse_twopair(self, tph):
+        #checks for a full house and two pair
+        #returns a list of lists: [fullhouse_bool, fullhouse_cards], [twopair_bool, twopair_cards]
+        tph = sorted(tph, key=self.get_value, reverse=True)
+        twopair = False, [None]
+        fullhouse = False, tph
+
+        pair_cards = []
+        toak_cards = []
+
+        tphlist_value = self.get_list_value(tph)
+
+        i = 0
+        for value in tphlist_value:
+            tlv = tphlist_value.copy()
+            tlv.remove(value)
+            if value in tlv:
+                #there is a pair
+                pair_cards.append(tph[i])
+                tlv.remove(value)
+            
+            if value in tlv:
+                #there is a three of a kind
+                toak_cards.append(tph[i])
+                if len(pair_cards) > 2:
+                    pair_cards.remove(tph[i])
+            
+            if len(toak_cards) > 3:
+                toak_cards.remove(tph[i])
+
+            i += 1
+        
+        if len(pair_cards) > 3 and sum(self.get_list_value(pair_cards[:1])) != sum(self.get_list_value(pair_cards[2:3])):
+            twopair = True, pair_cards
+        if len(toak_cards) > 1 and len(pair_cards) > 2:
+            fullhouse = True, tph #should not be tph but without that it's complicated
+
+        return fullhouse, twopair
 
     
     def check_poker_hand(self):
@@ -475,8 +521,12 @@ class Poker_sim(Card_draw):
         pair = hptf[1]
         three = hptf[2]
         four = hptf[3]
+        twopair = False, [None]
+        fullhouse = False, tph
+        flush = False, tph
+        straight = False, tph
             
-        if not pair[0] or not three[0] or not four[0] and len(tph) == 5:
+        if not pair[0] and len(tph) == 5:
             fs = self.flush_straight(tph)
             flush = fs[0]
             straight = fs[1]
@@ -484,32 +534,35 @@ class Poker_sim(Card_draw):
             fs = self.flush_straight(tph)
             flush = fs[0]
             straight = fs[1]
-        else:
-            flush = False, tph
-            straight = False, tph
+        elif pair[0]:
+            fhtp = self.fullhouse_twopair(tph)
+            fullhouse = fhtp[0]
+            twopair = fhtp[1]
+            
         
-        if len(most_value) < 2:
-            print("Nejvyssi karta:", most_value[0])
-        else:
-            print("Nejvyssi karty:", end=" ")
-            self.print_cards(most_value)
-
+        print("Nejvyssi karta:", most_value[0])
         if pair[0]:
             print("Par:", end=" ")
             self.print_cards(pair[1])
+        if twopair[0]:
+            print("Dva pary:", end=" ")
+            self.print_cards(twopair[1])
         if three[0]:
             print("Trojice:", end=" ")
             self.print_cards(three[1])
-        if four[0]:
-            print("Ctverice:", end=" ")
-            self.print_cards(four[1])
-        if flush[0]:
-            print("Barva:", end=" ")
-            self.print_cards(flush[1])
         if straight[0]:
             print("Postupka:", end=" ")
             self.print_cards(straight[1])
-            return False #debug
+        if flush[0]:
+            print("Barva:", end=" ")
+            self.print_cards(flush[1])
+        if fullhouse[0]:
+            print("Fullhouse:", end=" ")
+            self.print_cards(fullhouse[1])
+        if four[0]:
+            print("Ctverice:", end=" ")
+            self.print_cards(four[1])
+            #return False #debug
 
         return True
 
@@ -519,16 +572,33 @@ class Poker_sim(Card_draw):
             print(card, end=" ")
         
         print()
-            
+
+    def print_table(self):
+        for i in range(len(self.table)*2 + 3):
+            print("_", end="")
+
+        print("\n ", end="")
+        self.print_cards(self.table)
+
+        for i in range(len(self.table)* 2 + 3):
+            print("_", end="")
+        
+        print()
+
     
     def play(self):
         self.gen_table()
         self.gen_hand()
-        print("Na stole:", self.table) #debug
-        print("V ruce:", self.hand) #debug
+        
+        #print("Na stole:", end=" ")
+        self.print_table()
+        print("\nV ruce:", end=" ")
+        self.print_cards(sorted(self.hand, key=self.get_value, reverse=True))
+        print("\n_____________________________")
 
         if self.check_poker_hand() is False:
             return False
+        input("...") #debug
 
 
 def get_num(message):
@@ -610,3 +680,7 @@ def game():
     print("Diky za hrani!!")
 
 game()
+
+#in pokersim change in func flushstraigh and hcptf when looping through thp loop in thplist_value instead
+#because you don't have to then use self.get_value so many times and 
+#the code will be better and more beautiful and also shorter i think
