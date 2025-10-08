@@ -463,6 +463,9 @@ class Poker_sim(Card_draw):
         
         return flush, straight
 
+
+    def fullhouse_twopair(self, tph):
+
     
     def check_poker_hand(self):
         tph = self.table + self.hand #table plus hand
@@ -503,10 +506,10 @@ class Poker_sim(Card_draw):
         if flush[0]:
             print("Barva:", end=" ")
             self.print_cards(flush[1])
-            return False #debug
         if straight[0]:
             print("Postupka:", end=" ")
             self.print_cards(straight[1])
+            return False #debug
 
         return True
 
