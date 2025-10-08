@@ -2,6 +2,7 @@ import random
 import itertools
 import string
 import copy
+from time import sleep
 
 players = []
 
@@ -452,12 +453,13 @@ class Poker_sim(Card_draw):
             k = 2
             for card in tph[1:]:
                 if k == len(tph):
-                    straight = True, tph[1:] + tph[0]
+                    straight = True, tph[1:] + [tph[0]]
                     break
                 card1 = self.get_value(card)
                 card2 = self.get_value(tph[k])
                 if card1 != card2 + 1:
                     break
+                k += 1
         
         return flush, straight
 
@@ -501,10 +503,10 @@ class Poker_sim(Card_draw):
         if flush[0]:
             print("Barva:", end=" ")
             self.print_cards(flush[1])
+            return False #debug
         if straight[0]:
             print("Postupka:", end=" ")
             self.print_cards(straight[1])
-            return False #debug
 
         return True
 
