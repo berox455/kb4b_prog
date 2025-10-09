@@ -427,18 +427,40 @@ class Poker_sim(Card_draw):
         #checks for flush and straight
         #returns list of lists: [flush_bool, flush_cards], [straight_bool, straight_cards]
         tph = sorted(tph, key=self.get_value, reverse=True) #sorted by value high to low
-        flush = True, tph
+        flush = False, tph
         straight = False, tph
 
-        i = 1
+        scs = [] #suit cards
+        hcs = []
+        dcs = []
+        ccs = []
+
         for card in tph:
-            if i == len(tph):
+            match card[0]:
+                case "♠":
+                    scs.append(card)
+                case "♥":
+                    hcs.append(card)
+                case "♦":
+                    dcs.append(card)
+                case "♣":
+                    ccs.append(card)
+
+            if len(scs) >= 5:
+                flush = True, scs[:4]
                 break
-            card2 = tph[i]
-            if card[0] != card2[0]:
-                flush = False, tph
+            if len(hcs) >= 5:
+                flush = True, hcs[:4]
                 break
-            i += 1
+            if len(dcs) >= 5:
+                flush = True, dcs[:4]
+                break
+            if len(ccs) >= 5:
+                flush = True, ccs[:4]
+                break
+
+            
+
 
         n_straight_cards = 1
         j = 1
@@ -451,6 +473,9 @@ class Poker_sim(Card_draw):
             card2 = self.get_value(tph[j])
             if card1 == card2 + 1:
                 n_straight_cards += 1
+                print("Straight trig:", n_straight_cards) #debug
+            elif len(tph) > 5 and card1 == card2:
+                n_straight_cards = n_straight_cards
             else:
                 n_straight_cards = 1
             j += 1
@@ -507,7 +532,7 @@ class Poker_sim(Card_draw):
         if len(pair_cards) > 3 and sum(self.get_list_value(pair_cards[:1])) != sum(self.get_list_value(pair_cards[2:3])):
             twopair = True, pair_cards
         if len(toak_cards) > 1 and len(pair_cards) > 2:
-            fullhouse = True, tph #should not be tph but without that it's complicated
+            fullhouse = True, toak_cards[:2] + pair_cards[2:3]
 
         return fullhouse, twopair
 
@@ -555,7 +580,7 @@ class Poker_sim(Card_draw):
             fs = self.flush_straight(tph)
             flush = fs[0]
             straight = fs[1]
-        elif pair[0] or len(tph) > 5:
+        elif pair[0] or len(tph) >= 5:
             fs = self.flush_straight(tph)
             flush = fs[0]
             straight = fs[1]
@@ -586,6 +611,7 @@ class Poker_sim(Card_draw):
         if flush[0]:
             print("Barva:", end=" ")
             self.print_cards(flush[1])
+            return False #debug
         if fullhouse[0]:
             print("Fullhouse:", end=" ")
             self.print_cards(fullhouse[1])
@@ -630,24 +656,29 @@ class Poker_sim(Card_draw):
         print("\nV ruce:", end=" ")
         self.print_cards(sorted(self.hand, key=self.get_value, reverse=True))
         print("\n___________________________________")
-        self.check_poker_hand()
+        if self.check_poker_hand(): #debug
+            return True #debug
 
 
     def play(self):
         self.gen_table()
         self.gen_hand()
         self.engine()
-        add_card = input_check("\n\nOtocit kartu na stole?", ["a", "n"])
+        add_card = "a" #input_check("\n\nOtocit kartu na stole?", ["a", "n"]) #debug
         
         while add_card == "a":
             self.table.append(super().c_draw())
-            self.engine()
+            if self.engine(): #debug
+                eret = True #debug
+            else:
+                eret = False
             if len(self.table) == 5:
-                print("Vsechny karty na stole jsou otoceny")
+                print("\nVsechny karty na stole jsou otoceny")
                 break
-            add_card = input_check("\n\nOtocit kartu na stole?", ["a", "n"])
+            add_card = "a" #input_check("\n\nOtocit kartu na stole?", ["a", "n"]) #debug
             
         print("-----------------------------------\n")
+        return eret #debug
 
 
 def get_num(message):
@@ -694,7 +725,11 @@ def account_creation(debug = False, debug_game = None):
     if debug:
         choice = debug_game
     else:
-        choice = input_check("Co ches hrat?", ["hodminci", "hodkostkou", "genkarty", "genhesla", "hadejcislo", "simpokru", "nechcihrat"])
+        choice = input_check("Co ches hrat?", [
+            "hodminci", "hodkostkou", "genkarty", 
+            "genhesla", "hadejcislo", "simpokeru", 
+            "nechcihrat"
+            ])
 
     if choice == "hodminci":
         players.append(Coin_throw(100))
@@ -706,7 +741,7 @@ def account_creation(debug = False, debug_game = None):
         players.append(Password_gen())
     elif choice == "hadejcislo":
         players.append(Guess_the_number())
-    elif choice == "simpokru":
+    elif choice == "simpokeru":
         players.append(Poker_sim())
 
 
@@ -717,13 +752,13 @@ def account_creation(debug = False, debug_game = None):
 
 
 def game():
-    go = account_creation(True, "simpokru") #debug
+    go = account_creation(True, "simpokeru") #debug
     i = 0
 
     while go:
         if players[i].play() is False:
             break
-        go = account_creation()#True, "simpokru") #debug
+        go = account_creation(True, "simpokeru") #debug
         i += 1
         
     print("Diky za hrani!!")
