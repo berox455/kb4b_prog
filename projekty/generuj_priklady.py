@@ -1,14 +1,15 @@
 import random
 from ulohy_random import get_num
+from time import sleep
 
-def generuj_priklad():
-    cislo1 = random.randint(0, 10)
-    op = random.choice(["+", "-", "*"])
-    cislo2 = random.randint(0, 10)
+def generuj_priklad(priklad):
+    cislo1 = int(priklad.split()[0])
+    op = priklad.split()[1]
+    cislo2 = int(priklad.split()[2])
 
-    print(f"{cislo1} {op} {cislo2} = ", end="")
+    print(f"{priklad} =", end=" ")
 
-    vstup = get_num()
+    vstup = int(input())
 
     if op == "+":
         spravne = cislo1 + cislo2
@@ -19,11 +20,23 @@ def generuj_priklad():
 
     return vstup == spravne
 
-n_prikladu = 3
-body = 0
+cesta = "2. prace_se_soubory/data/priklady.txt"
 
-for i in range(n_prikladu):
-    if generuj_priklad():
-        body += 1
+with open(cesta, "r") as file:
+    priklady = file.readlines()
+
+    i = 0
+    for p in priklady:
+        nova = p.strip()
+
+        priklady[i] = nova
+        i += 1
+
+    n_prikladu = 3
+    body = 0
+
+    for i in range(n_prikladu):
+        if generuj_priklad(random.choice(priklady)):
+            body += 1
 
 print(f"Spravne: {body} / {n_prikladu}")
