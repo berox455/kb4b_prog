@@ -3,6 +3,7 @@ import itertools
 import string
 import copy
 from time import sleep
+import re
 
 players = []
 
@@ -581,8 +582,6 @@ class Poker_sim(Card_draw):
             flush = fs[0]
             straight = fs[1]
         elif pair[0] or len(tph) >= 5:
-            fs = self.flush_straight(tph)
-            flush = fs[0]
             straight = fs[1]
             fhtp = self.fullhouse_twopair(tph)
             fullhouse = fhtp[0]
@@ -763,7 +762,18 @@ def game():
         
     print("Diky za hrani!!")
 
-game()
+#game()
+
+u = Card_draw()
+
+x_deck = []
+
+for i in u.deck:
+    x = re.findall("0$", i)
+    if x:
+        x_deck.append(i)
+
+print(x_deck)
 
 #in pokersim change in func flushstraigh and hcptf when looping through thp loop in thplist_value instead
 #because you don't have to then use self.get_value so many times and 
