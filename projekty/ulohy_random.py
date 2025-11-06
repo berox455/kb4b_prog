@@ -681,7 +681,7 @@ class Poker_sim(Card_draw):
         return eret #debug
 
 
-def get_num(message):
+def get_num(message=""):
     print(message, end=" ")
     user_input = input()
 
@@ -774,7 +774,7 @@ for i in u.deck:
     if x:
         x_deck.append(i)
 
-print(x_deck)
+#print(x_deck)
 
 #in pokersim change in func flushstraigh and hcptf when looping through thp loop in thplist_value instead
 #because you don't have to then use self.get_value so many times and 
