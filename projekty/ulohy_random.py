@@ -238,19 +238,19 @@ class Password_gen:
 
         for letter in password:
             if letter in self.special_characters:
-                print("There's a special character!")
+                #print("There's a special character!")
                 bool_sp_ch = True
             if letter in self.numbers:
-                print("There's a number character!")
+                #print("There's a number character!")
                 bool_num = True
             if letter in alphabet_uc:
-                print("There's an uppercase character!")
+                #print("There's an uppercase character!")
                 bool_uc = True
             check = bool_sp_ch and bool_num and bool_uc
             if check:
                 break
 
-        print("Check:", check)
+        #print("Check:", check)
         return check
 
     
@@ -751,28 +751,28 @@ def account_creation(debug = False, debug_game = None):
 
 
 def game():
-    go = account_creation(True, "simpokeru") #debug
+    go = account_creation()#True, "simpokeru") #debug
     i = 0
 
     while go:
         if players[i].play() is False:
             break
-        go = account_creation(True, "simpokeru") #debug
+        go = account_creation()#True, "simpokeru") #debug
         i += 1
         
     print("Diky za hrani!!")
 
-#game()
-
-u = Card_draw()
-
-x_deck = []
-
-for i in u.deck:
-    x = re.findall("0$", i)
-    if x:
-        x_deck.append(i)
-
+game()
+#
+#u = Card_draw()
+#
+#x_deck = []
+#
+#for i in u.deck:
+#    x = re.findall("0$", i)
+#    if x:
+#        x_deck.append(i)
+#
 #print(x_deck)
 
 #in pokersim change in func flushstraigh and hcptf when looping through thp loop in thplist_value instead
