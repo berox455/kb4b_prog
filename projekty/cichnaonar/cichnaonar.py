@@ -4,13 +4,6 @@ import matplotlib.pyplot as plt
 import os.path
 
 path = "projekty/cichnaonar/"  # path to the project without a file
-#path = "projekty/cichnaonar/quiz_questions.csv"
-#
-#with open(path, "r") as file:
-#    reader = csv.DictReader(file)
-#
-#    for line in reader:
-#        print(line)
 
 def write_user(path: str) -> bool:
     if not os.path.isfile(path+"login.csv"):
@@ -23,7 +16,7 @@ def write_user(path: str) -> bool:
             return False
 
         with open(path + "login.csv", "a") as file:
-            file.write(f"{name}, {password}\n")
+            file.write(f"{name},{password}\n")
     return True
 
 
@@ -45,16 +38,35 @@ def get_pass() -> tuple[str, str]:
     return password, password1
     
 
-
 def register() -> None:
     register_bool = write_user(path)
     while not register_bool:
         register_bool = write_user(path)
 
 
+def login(path: str) -> bool:
+    path = path + "login.csv"
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+
+    with open(path, "r") as file:
+        reader = csv.DictReader(file)
+
+        for line in reader:
+            if username == line["username"] and password == line["password"]:
+                print("You logged in successfully")
+                return True
+    return False
+
+
 def clear_login_file() -> None:  # debug
     open(path + "login.csv", "w").close()
 
 
+def game() -> None:
+    return None
+
+
 #register()
-clear_login_file()
+login(path)
+#lear_login_file()
