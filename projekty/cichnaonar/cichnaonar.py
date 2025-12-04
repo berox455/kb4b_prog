@@ -2,12 +2,13 @@ import csv
 import random
 import matplotlib.pyplot as plt
 import os.path
+from helpful import input_check, message_choices_print
 
 path = "projekty/cichnaonar/"  # path to the project without a file
 
 def write_user(path: str) -> bool:
     if not os.path.isfile(path+"login.csv"):
-        open(path + "login.csv", "w").close()
+        clear_login_file(path)
         return False
     else:
         name, password = create_user()
@@ -59,14 +60,24 @@ def login(path: str) -> bool:
     return False
 
 
-def clear_login_file() -> None:  # debug
-    open(path + "login.csv", "w").close()
+def clear_login_file(path) -> None:  # debug
+    path = path + "login.csv"
+    with open(path, "w") as file:
+        file.write("username,password\n")
 
 
 def game() -> None:
-    return None
+    choice = input_check("What do you want to do?", ["register", "login"])
+    match choice:
+        case "register":
+            register()
+        case "login":
+            login(path)
+        case _:
+            print("Something went wrong!!!!!!!")
 
 
+game()
 #register()
-login(path)
-#lear_login_file()
+#login(path)
+#clear_login_file(path)
