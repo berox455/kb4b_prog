@@ -57,7 +57,93 @@ def login(path: str) -> bool:
             if username == line["username"] and password == line["password"]:
                 print("You logged in successfully")
                 return True
+    print("Wrong username or password!!!")
     return False
+
+
+def get_questions(path) -> tuple[list, list, list]:
+    path = path + "quiz_questions.csv"
+    e_questions: list = []
+    m_questions: list = []
+    h_questions: list = []
+
+    with open(path, "r") as file:
+        reader = csv.DictReader(file)
+
+        for line in reader:
+            match line["difficulty"]:
+                case "easy":
+                    e_questions.append(line)
+                case "medium":
+                    m_questions.append(line)
+                case "hard":
+                    h_questions.append(line)
+
+    print("easy")
+    for q in e_questions:
+        print(q["difficulty"], q["category"])
+    print("medium")
+    for q in m_questions:
+        print(q["difficulty"], q["category"])
+    print("hard")
+    for q in h_questions:
+        print(q["difficulty"], q["category"])
+
+    return e_questions, m_questions, h_questions
+
+
+def stats(path) -> tuple[list[str], list[int], list[str], list[int]]:
+    e, m, h = get_questions(path)
+    path = path + "quiz_questions.csv"
+
+    diffs = ["easy", "medium", "hard"]
+    n_diffs = [len(e), len(m), len(h)]
+
+
+    categories: list[str] = []
+    n_categories: list[int] = []
+
+    with open(path, "r") as file:
+        reader = csv.DictReader(file)
+
+
+        for line in reader:
+            category = line["category"]
+            if category not in categories:
+                categories.append(category)
+                n_categories.append(1)
+            
+            for index, name in enumerate(categories):
+                if category == name:
+                    n_categories[index] += 1
+
+    return diffs, n_diffs, categories, n_categories
+
+
+def get_graphs() -> None:
+    diffs, n_diffs, categories, n_categories = stats(path)
+
+
+
+    for index, name in enumerate(diffs):
+        print(f"{name}: {n_diffs[index]}")
+    plt.bar(diffs, n_diffs)
+    plt.title("Difficulty ratio")
+    plt.xlabel("Difficulty")
+    plt.ylabel("# of Questions")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
+
+    for index, name in enumerate(categories):
+        print(f"{name}: {n_categories[index]}")
+    plt.bar(categories, n_categories)
+    plt.title("Category ratio")
+    plt.xlabel("Categories")
+    plt.ylabel("# of Questions")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
 
 
 def clear_login_file(path) -> None:  # debug
@@ -66,15 +152,42 @@ def clear_login_file(path) -> None:  # debug
         file.write("username,password\n")
 
 
-def game() -> None:
-    choice = input_check("What do you want to do?", ["register", "login"])
+def authentication() -> bool:
+    choice = input_check("Create an account or log in to an existing one", ["register", "login"])
+    auth = False
     match choice:
         case "register":
             register()
         case "login":
-            login(path)
+            auth = login(path)
         case _:
             print("Something went wrong!!!!!!!")
+
+    return auth
+
+
+def engine() -> None:
+    choice = input_check("Now the main part of the game", ["statistics", "winners", "play", "exit"])
+    match choice:
+        case "statistics":
+            get_graphs()
+        case "winners":
+            # winners
+            print("Winners not done yet!!!")
+        case "play":
+            # The "game"
+            print("Game's not done yet!!!")
+        case _:
+            return None
+
+
+def game() -> None:
+    auth = authentication()
+
+    if auth:
+        print("Welcome to cichnaonar!!!")
+        engine()
+        print("Thanks for playig!!")
 
 
 game()
