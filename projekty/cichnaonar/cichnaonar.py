@@ -1,7 +1,7 @@
 import csv
 import random
 import matplotlib.pyplot as plt
-import os.path
+import os
 from helpful import input_check, message_choices_print
 
 path = "projekty/cichnaonar/"  # path to the project without a file
@@ -168,7 +168,7 @@ def authentication() -> bool:
     return auth
 
 
-def pick_question(questions_from_difficulty: list) -> bool:
+def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     qfd = questions_from_difficulty
 
     question = random.choice(qfd)
@@ -177,16 +177,38 @@ def pick_question(questions_from_difficulty: list) -> bool:
     question_txt = question["question"]
 
     print(f"Category: {question_cat}")
-    print(f"True or False?\n {question_txt}")
+    print(question_txt)
 
-    return question["correct_answer"]
+    if question["correct_answer"] == "True":
+        question_bool = True
+    else:
+        question_bool = False
+
+    return question, question_bool
 
 
 def competition() -> None:
     questions = get_questions(path)
     lvl = 1
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-    question = pick_question(questions[lvl//5])
+    while lvl < 15:
+        print(f"Lvl {lvl}")
+        pick, question_bool = pick_question(questions[(lvl-1)//5])
+        questions[(lvl-1)//5].remove(pick)
+
+        answer = input_check("True or False?", ["true", "false"])
+        if answer == "true":
+            answer = True
+        else:
+            answer = False
+
+        if answer != question_bool:
+            print(f"It was in fact not {answer}")
+            break
+        
+        print("That's right!")
+        lvl += 1
 
     return None
 
