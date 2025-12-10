@@ -79,6 +79,7 @@ def get_questions(path) -> tuple[list, list, list]:
                 case "hard":
                     h_questions.append(line)
 
+    """ Debug print
     print("easy")
     for q in e_questions:
         print(q["difficulty"], q["category"])
@@ -88,6 +89,7 @@ def get_questions(path) -> tuple[list, list, list]:
     print("hard")
     for q in h_questions:
         print(q["difficulty"], q["category"])
+    """
 
     return e_questions, m_questions, h_questions
 
@@ -166,6 +168,29 @@ def authentication() -> bool:
     return auth
 
 
+def pick_question(questions_from_difficulty: list) -> bool:
+    qfd = questions_from_difficulty
+
+    question = random.choice(qfd)
+
+    question_cat = question["category"]
+    question_txt = question["question"]
+
+    print(f"Category: {question_cat}")
+    print(f"True or False?\n {question_txt}")
+
+    return question["correct_answer"]
+
+
+def competition() -> None:
+    questions = get_questions(path)
+    lvl = 1
+
+    question = pick_question(questions[lvl//5])
+
+    return None
+
+
 def engine() -> None:
     choice = input_check("Now the main part of the game", ["statistics", "winners", "play", "exit"])
     match choice:
@@ -175,7 +200,7 @@ def engine() -> None:
             # winners
             print("Winners not done yet!!!")
         case "play":
-            # The "game"
+            competition()
             print("Game's not done yet!!!")
         case _:
             return None
