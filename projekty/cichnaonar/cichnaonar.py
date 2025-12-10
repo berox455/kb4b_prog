@@ -5,6 +5,7 @@ import os
 from helpful import input_check, message_choices_print
 
 path = "projekty/cichnaonar/"  # path to the project without a file
+username = ""
 
 def write_user(path: str) -> bool:
     if not os.path.isfile(path+"login.csv"):
@@ -47,6 +48,7 @@ def register() -> None:
 
 def login(path: str) -> bool:
     path = path + "login.csv"
+    global username
     username = input("Enter your username: ")
     password = input("Enter your password: ")
 
@@ -187,6 +189,10 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     return question, question_bool
 
 
+def add_winner() -> None:
+    print(f"username: {username}")
+
+
 def competition() -> None:
     questions = get_questions(path)
     lvl = 1
@@ -209,6 +215,15 @@ def competition() -> None:
         
         print("That's right!")
         lvl += 1
+
+    add_winner()  # debug
+    
+    if lvl != 15:
+        print("GG, better luck next time!!!")
+    else:
+        add_winner()
+        print("You won!!")
+
 
     return None
 
