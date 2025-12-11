@@ -189,8 +189,14 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     return question, question_bool
 
 
-def add_winner() -> None:
-    print(f"username: {username}")
+def add_winner(path) -> None:
+    path = path + "winners.csv"
+    if not os.path.isfile(path):
+        with open(path, "w") as file:
+            file.write("name\n")
+
+    with open(path, "a") as file:
+        file.write(f"{username}\n")
 
 
 def competition() -> None:
@@ -216,16 +222,37 @@ def competition() -> None:
         print("That's right!")
         lvl += 1
 
-    add_winner()  # debug
+    #add_winner(path)  # debug
     
     if lvl != 15:
         print("GG, better luck next time!!!")
     else:
-        add_winner()
+        add_winner(path)
         print("You won!!")
 
 
     return None
+
+
+def print_winners(path) -> None:
+    path = path + "winners.csv"
+    winners: list[str] = []
+
+    with open(path, "r") as file:
+        reader = csv.DictReader(file)
+
+        for line in reader:
+            winners.append(line["name"])
+
+    if len(winners) > 0:
+        print("The winners are:")
+        for winner in winners:
+            if winner == winners[-1]:
+                print(winner)
+            else:
+                print(winner, end=", ")
+    else:
+        print("There are no winners yet! You can be the first!")
 
 
 def engine() -> None:
@@ -234,8 +261,7 @@ def engine() -> None:
         case "statistics":
             get_graphs()
         case "winners":
-            # winners
-            print("Winners not done yet!!!")
+            print_winners(path)
         case "play":
             competition()
             print("Game's not done yet!!!")
