@@ -189,14 +189,14 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     return question, question_bool
 
 
-def add_winner(path) -> None:
+def add_winner(path, won: bool) -> None:
     path = path + "winners.csv"
     if not os.path.isfile(path):
         with open(path, "w") as file:
-            file.write("name\n")
+            file.write("name,won\n")
 
     with open(path, "a") as file:
-        file.write(f"{username}\n")
+        file.write(f"{username},{won}\n")
 
 
 def competition() -> None:
@@ -226,8 +226,9 @@ def competition() -> None:
     
     if lvl != 15:
         print("GG, better luck next time!!!")
+        add_winner(path, False)
     else:
-        add_winner(path)
+        add_winner(path, True)
         print("You won!!")
 
 
@@ -242,7 +243,9 @@ def print_winners(path) -> None:
         reader = csv.DictReader(file)
 
         for line in reader:
-            winners.append(line["name"])
+            name = line["name"]
+            if line["won"] == "True" and name not in winners:
+                winners.append(name)
 
     if len(winners) > 0:
         print("The winners are:")
@@ -255,16 +258,65 @@ def print_winners(path) -> None:
         print("There are no winners yet! You can be the first!")
 
 
+def player_stats(path) -> None:
+    path = path + "winners.csv"
+    plays = 0
+    wins = 0
+    plays_ot: list[int] = []
+    wins_ot: list[int] = []
+
+    with open(path, "r") as file:
+        reader = csv.DictReader(file)
+
+        for line in reader:
+            name = line["name"]
+            won = line["won"]
+
+            if name != username:
+                continue
+            
+            plays += 1
+            if won == "True":
+                wins += 1
+            plays_ot.append(plays)
+            wins_ot.append(wins)
+    
+    if plays == 0:
+        print("You've never played!! \nPlay a game or two to see some stats!!")
+        return None
+
+    winrate = wins/plays
+    print(f"plays: {plays}")
+    print(f"wins: {wins}")
+    print(f"winrate: {round(winrate*100, 2)}%")
+
+    plt.plot(plays_ot, wins_ot)
+    plt.title("Your stats")
+    plt.ylabel("Wins")
+    plt.xlabel("Plays")
+    plt.xticks(plays_ot[::1])
+    plt.yticks(wins_ot[::1])
+    plt.show()
+
+
+def statistics() -> None:
+    choice = input_check("Your stats or game stats?", ["game", "user"])
+
+    if choice == "user":
+        player_stats(path)
+    else:
+        get_graphs()
+
+
 def engine() -> None:
-    choice = input_check("Now the main part of the game", ["statistics", "winners", "play", "exit"])
+    choice = input_check("Now the main part of the game", ["stats", "winners", "play", "exit"])
     match choice:
-        case "statistics":
-            get_graphs()
+        case "stats":
+            statistics()
         case "winners":
             print_winners(path)
         case "play":
             competition()
-            print("Game's not done yet!!!")
         case _:
             return None
 
