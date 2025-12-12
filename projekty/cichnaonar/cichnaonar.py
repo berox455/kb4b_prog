@@ -369,5 +369,6 @@ def game() -> None:
         engine()
         print("Thanks for playing!!")
 
+#clear_login_file(path)
 #clear_winners_file(path)
 game()
