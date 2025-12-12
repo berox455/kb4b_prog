@@ -316,17 +316,14 @@ def player_stats(path) -> None:
         print("You've never played!! \nPlay a game or two to see some stats!!")
         return None
 
+    for i in range(len(games)):
+        plays_ot.append(i + 1)
+
     for game in games:
         if game == games[0]:
             wins_ot.append(0 if game == "F" else 1)
-            plays_ot.append(1)
         else:
-            plays_ot.append((plays_ot[-1] + 1))  # just do it in a seperate cycle
             wins_ot.append(wins_ot[-1] if game == "F" else wins_ot[-1] + 1)
-            #if game == "T":
-            #    wins_ot.append(wins_ot[-1] + 1)
-            #else:
-            #    wins_ot.append(wins_ot[-1])
 
     print(plays_ot, wins_ot)
 
