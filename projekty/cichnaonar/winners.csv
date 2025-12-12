@@ -1,3 +1,2 @@
-name,won
-kali,False
-kali,False
+name,plays,wins,games,last_lvl_reached
+kali,2,0,FF,3

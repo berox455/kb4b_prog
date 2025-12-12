@@ -6,10 +6,12 @@ from helpful import input_check, message_choices_print
 
 path = "projekty/cichnaonar/"  # path to the project without a file
 username = ""
+other_user_data: list[str] = []
 
 def write_user(path: str) -> bool:
-    if not os.path.isfile(path+"login.csv"):
+    if not os.path.isfile(path+"login.csv") or not os.path.isfile(path+"winners.csv"):
         clear_login_file(path)
+        clear_winners_file(path)
         return False
     else:
         name, password = create_user()
@@ -19,6 +21,8 @@ def write_user(path: str) -> bool:
 
         with open(path + "login.csv", "a") as file:
             file.write(f"{name},{password}\n")
+        with open(path + "winners.csv", "a") as file:
+            file.write(f"{name},0,0,,0")
     return True
 
 
@@ -156,6 +160,12 @@ def clear_login_file(path) -> None:  # debug
         file.write("username,password\n")
 
 
+def clear_winners_file(path) -> None:
+    path = path + "winners.csv"
+    with open(path, "w") as file:
+        file.write("name,plays,wins,games,last_lvl_reached\n")
+
+
 def authentication() -> bool:
     choice = input_check("Create an account or log in to an existing one", ["register", "login"])
     auth = False
@@ -189,17 +199,57 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     return question, question_bool
 
 
-def add_winner(path, won: bool) -> None:
+def get_user(path) -> tuple[str, int, int, str, int]:
     path = path + "winners.csv"
-    if not os.path.isfile(path):
-        with open(path, "w") as file:
-            file.write("name,won\n")
+    name = username
+    plays = 0
+    wins = 0
+    games = ""
+    last_lvl_reached = 0
+
+    with open(path, "r") as file:
+        reader = csv.DictReader(file)
+
+        for line in reader:
+            if line["name"] != name:
+                temp = ""
+                for n in line:
+                    if n != line[0]:
+                        temp += "," + n[1]
+                    else:
+                        temp += n[1]
+                other_user_data.append(temp)
+                continue
+            
+            plays = int(line["plays"])
+            wins = int(line["wins"])
+            games = line["games"]
+            last_lvl_reached = int(line["last_lvl_reached"])
+
+    return name, plays, wins, games, last_lvl_reached
+
+
+def save_user(path, game: str, last_lvl_reached: int) -> None:
+    name, plays, wins, games, not_useful_now = get_user(path)
+    games += game
+
+    clear_winners_file(path)
+
+    path += "winners.csv"
+
+    if game == "T":
+        wins += 1
+    plays += 1
+
 
     with open(path, "a") as file:
-        file.write(f"{username},{won}\n")
+        for string in other_user_data:
+            file.write(f"{string}\n")
+        file.write(f"{name},{plays},{wins},{games},{last_lvl_reached}\n")
+        
 
 
-def competition() -> None:
+def competition() -> int:
     questions = get_questions(path)
     lvl = 1
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -226,13 +276,12 @@ def competition() -> None:
     
     if lvl != 15:
         print("GG, better luck next time!!!")
-        add_winner(path, False)
+        save_user(path, "F", lvl)
     else:
-        add_winner(path, True)
+        save_user(path, "T", lvl)
         print("You won!!")
 
-
-    return None
+    return lvl
 
 
 def print_winners(path) -> None:
@@ -244,7 +293,7 @@ def print_winners(path) -> None:
 
         for line in reader:
             name = line["name"]
-            if line["won"] == "True" and name not in winners:
+            if int(line["wins"]) >= 1:
                 winners.append(name)
 
     if len(winners) > 0:
@@ -259,31 +308,27 @@ def print_winners(path) -> None:
 
 
 def player_stats(path) -> None:
-    path = path + "winners.csv"
-    plays = 0
-    wins = 0
+    name, plays, wins, games, lats_lvl_reached = get_user(path)
     plays_ot: list[int] = []
     wins_ot: list[int] = []
 
-    with open(path, "r") as file:
-        reader = csv.DictReader(file)
-
-        for line in reader:
-            name = line["name"]
-            won = line["won"]
-
-            if name != username:
-                continue
-            
-            plays += 1
-            if won == "True":
-                wins += 1
-            plays_ot.append(plays)
-            wins_ot.append(wins)
-    
     if plays == 0:
         print("You've never played!! \nPlay a game or two to see some stats!!")
         return None
+
+    for game in games:
+        if game == games[0]:
+            wins_ot.append(0 if game == "F" else 1)
+            plays_ot.append(1)
+        else:
+            plays_ot.append((plays_ot[-1] + 1))  # just do it in a seperate cycle
+            wins_ot.append(wins_ot[-1] if game == "F" else wins_ot[-1] + 1)
+            #if game == "T":
+            #    wins_ot.append(wins_ot[-1] + 1)
+            #else:
+            #    wins_ot.append(wins_ot[-1])
+
+    print(plays_ot, wins_ot)
 
     winrate = wins/plays
     print(f"plays: {plays}")
@@ -327,10 +372,34 @@ def game() -> None:
     if auth:
         print("Welcome to cichnaonar!!!")
         engine()
-        print("Thanks for playig!!")
+        print("Thanks for playing!!")
 
-
+#clear_winners_file(path)
 game()
 #register()
 #login(path)
 #clear_login_file(path)
+
+""" winners rework
+name, plays, wins, last lvl reached
+
+anytime you run this code, it checks for winners.csv file
+if it's not present, it creates it
+if it is though, it copies it all and at the end if the user played the game
+it adds the stats from it into the copy and then rewrites winners.csv with the new info
+
+how do the stats work?
+- they wouldn't be able to show progression through time
+- it would take less time to show
+- winrate would still be there
+- wins and plays as well
+
+is it better?
+- the progression is pretty crucial, so probably not
+- last level reached is pretty cool though
+
+JUST add a list of bools to the file as games tab
+so it's:
+
+name: str, plays: int, wins: int, games: list[bool], last lvl reached: int
+"""
