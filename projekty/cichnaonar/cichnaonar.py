@@ -8,7 +8,7 @@ from time import sleep
 USER_LOGINS = "login.csv"
 USER_SAVES = "winners.csv"
 QUIZ_QUESTIONS = "quiz_questions.csv"
-username = ""
+CURRENT_USER = "current_user.txt"
 
 
 def write_user() -> bool:
@@ -55,7 +55,6 @@ def register() -> None:
 
 
 def login() -> bool:
-    global username
     username = input("Enter your username: ")
     password = input("Enter your password: ")
 
@@ -64,6 +63,8 @@ def login() -> bool:
 
         for line in reader:
             if username == line["username"] and password == line["password"]:
+                with open(CURRENT_USER, "w") as file:
+                    file.write(username)
                 print("You logged in successfully")
                 sleep(1.5)
                 clear_terminal()
@@ -182,7 +183,8 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
 
 
 def get_user(for_stats: bool = False) -> tuple[str, int, int, str, int | list[str]]:
-    name = username
+    with open(CURRENT_USER, "r") as file:
+        name = file.readline()
     plays = 0
     wins = 0
     games = ""
@@ -233,19 +235,19 @@ def save_user(game: str, last_lvl_reached: int) -> None:
         file.write(f"{name},{plays},{wins},{games},{last_lvl_reached}\n")
 
 
-def competition() -> int:
+def competition() -> None:
     questions = get_questions()
-    lvl = 1
+    lvl = 0
 
     clear_terminal()
 
     while lvl < 15:
-        print(f"Lvl {lvl}")
-        pick, question_bool = pick_question(questions[(lvl-1)//5])
-        questions[(lvl-1)//5].remove(pick)
+        print(f"Lvl {lvl+1}")
+        pick, question_bool = pick_question(questions[(lvl)//5])
+        questions[(lvl)//5].remove(pick)
 
-        answer = input_check("True or False?", ["true", "false"])
-        answer = answer == "true"
+        answer = input_check("True or False?", ["t", "f"])
+        answer = answer == "t"
 
         if answer != question_bool:
             print(f"It was in fact not {answer}")
@@ -261,8 +263,6 @@ def competition() -> int:
     else:
         save_user("T", lvl)
         print("You won!!")
-
-    return lvl
 
 
 def print_winners() -> None:
@@ -317,7 +317,15 @@ def player_stats() -> None:
     plt.title("Your stats")
     plt.ylabel("Wins")
     plt.xlabel("Plays")
-    plt.xticks(plays_ot[::1])
+    plen = len(plays_ot)
+    if plen < 25:
+        plt.xticks(plays_ot[::1])
+    elif plen < 100:
+        plt.xticks(plays_ot[::5])
+    elif plen < 500:
+        plt.xticks(plays_ot[::10])
+    else:
+        plt.xticks(plays_ot[::50])
     plt.yticks(wins_ot[::1])
     plt.show()
 
@@ -354,6 +362,7 @@ def game() -> None:
         running = engine()
         while running:
             running = engine()
+        os.remove(CURRENT_USER)
         print("Thanks for playing!!")
 
 
