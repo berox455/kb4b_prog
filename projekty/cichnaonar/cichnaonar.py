@@ -154,7 +154,7 @@ def get_graphs() -> None:
     plt.show()
 
 
-def clear_login_file(path) -> None:  # debug
+def clear_login_file(path) -> None:
     path = path + "login.csv"
     with open(path, "w") as file:
         file.write("username,password\n")
@@ -271,8 +271,6 @@ def competition() -> int:
         
         print("That's right!")
         lvl += 1
-
-    #add_winner(path)  # debug
     
     if lvl != 15:
         print("GG, better luck next time!!!")
@@ -373,30 +371,3 @@ def game() -> None:
 
 #clear_winners_file(path)
 game()
-#register()
-#login(path)
-#clear_login_file(path)
-
-""" winners rework
-name, plays, wins, last lvl reached
-
-anytime you run this code, it checks for winners.csv file
-if it's not present, it creates it
-if it is though, it copies it all and at the end if the user played the game
-it adds the stats from it into the copy and then rewrites winners.csv with the new info
-
-how do the stats work?
-- they wouldn't be able to show progression through time
-- it would take less time to show
-- winrate would still be there
-- wins and plays as well
-
-is it better?
-- the progression is pretty crucial, so probably not
-- last level reached is pretty cool though
-
-JUST add a list of bools to the file as games tab
-so it's:
-
-name: str, plays: int, wins: int, games: list[bool], last lvl reached: int
-"""
