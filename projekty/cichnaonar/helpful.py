@@ -1,3 +1,5 @@
+import os
+
 def input_check(message, choices):
     message_choices_print(message, choices)
 
@@ -24,3 +26,7 @@ def message_choices_print(message, choices):
                 print(choice + ",", end=" ")
             else:
                 print(choice, end=": ")
+
+
+def clear_terminal() -> None:
+    os.system('cls' if os.name == 'nt' else 'clear')

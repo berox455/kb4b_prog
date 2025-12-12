@@ -2,27 +2,31 @@ import csv
 import random
 import matplotlib.pyplot as plt
 import os
-from helpful import input_check, message_choices_print
+from helpful import input_check, clear_terminal
+from time import sleep
 
-path = "projekty/cichnaonar/"  # path to the project without a file
+USER_LOGINS = "login.csv"
+USER_SAVES = "winners.csv"
+QUIZ_QUESTIONS = "quiz_questions.csv"
 username = ""
-other_user_data: list[str] = []
 
-def write_user(path: str) -> bool:
-    if not os.path.isfile(path+"login.csv") or not os.path.isfile(path+"winners.csv"):
-        clear_login_file(path)
-        clear_winners_file(path)
+
+def write_user() -> bool:
+    if not os.path.isfile(USER_LOGINS) or not os.path.isfile(USER_SAVES):
+        clear_login_file()
+        clear_winners_file()
         return False
-    else:
-        name, password = create_user()
-        print(f"name: {name}, password: {password}")
-        if input("Is this information correct? [y][n]\t").lower() != "y":
-            return False
 
-        with open(path + "login.csv", "a") as file:
-            file.write(f"{name},{password}\n")
-        with open(path + "winners.csv", "a") as file:
-            file.write(f"{name},0,0,,0")
+    name, password = create_user()
+    print(f"name: {name}, password: {password}")
+    if input("Is this information correct? [y][n]\t").lower() != "y":
+        return False
+
+    with open(USER_LOGINS, "a") as file:
+        file.write(f"{name},{password}\n")
+    with open(USER_SAVES, "a") as file:
+        file.write(f"{name},0,0,,0")
+
     return True
 
 
@@ -42,38 +46,38 @@ def get_pass() -> tuple[str, str]:
     password1 = input("Enter the password again: ")
 
     return password, password1
-    
+
 
 def register() -> None:
-    register_bool = write_user(path)
+    register_bool = write_user()
     while not register_bool:
-        register_bool = write_user(path)
+        register_bool = write_user()
 
 
-def login(path: str) -> bool:
-    path = path + "login.csv"
+def login() -> bool:
     global username
     username = input("Enter your username: ")
     password = input("Enter your password: ")
 
-    with open(path, "r") as file:
+    with open(USER_LOGINS, "r") as file:
         reader = csv.DictReader(file)
 
         for line in reader:
             if username == line["username"] and password == line["password"]:
                 print("You logged in successfully")
+                sleep(1.5)
+                clear_terminal()
                 return True
     print("Wrong username or password!!!")
     return False
 
 
-def get_questions(path) -> tuple[list, list, list]:
-    path = path + "quiz_questions.csv"
+def get_questions() -> tuple[list, list, list]:
     e_questions: list = []
     m_questions: list = []
     h_questions: list = []
 
-    with open(path, "r") as file:
+    with open(QUIZ_QUESTIONS, "r") as file:
         reader = csv.DictReader(file)
 
         for line in reader:
@@ -85,42 +89,26 @@ def get_questions(path) -> tuple[list, list, list]:
                 case "hard":
                     h_questions.append(line)
 
-    """ Debug print
-    print("easy")
-    for q in e_questions:
-        print(q["difficulty"], q["category"])
-    print("medium")
-    for q in m_questions:
-        print(q["difficulty"], q["category"])
-    print("hard")
-    for q in h_questions:
-        print(q["difficulty"], q["category"])
-    """
-
     return e_questions, m_questions, h_questions
 
 
-def stats(path) -> tuple[list[str], list[int], list[str], list[int]]:
-    e, m, h = get_questions(path)
-    path = path + "quiz_questions.csv"
-
+def stats() -> tuple[list[str], list[int], list[str], list[int]]:
+    e, m, h = get_questions()
     diffs = ["easy", "medium", "hard"]
     n_diffs = [len(e), len(m), len(h)]
-
 
     categories: list[str] = []
     n_categories: list[int] = []
 
-    with open(path, "r") as file:
+    with open(QUIZ_QUESTIONS, "r") as file:
         reader = csv.DictReader(file)
-
 
         for line in reader:
             category = line["category"]
             if category not in categories:
                 categories.append(category)
                 n_categories.append(1)
-            
+
             for index, name in enumerate(categories):
                 if category == name:
                     n_categories[index] += 1
@@ -129,9 +117,7 @@ def stats(path) -> tuple[list[str], list[int], list[str], list[int]]:
 
 
 def get_graphs() -> None:
-    diffs, n_diffs, categories, n_categories = stats(path)
-
-
+    diffs, n_diffs, categories, n_categories = stats()
 
     for index, name in enumerate(diffs):
         print(f"{name}: {n_diffs[index]}")
@@ -154,26 +140,25 @@ def get_graphs() -> None:
     plt.show()
 
 
-def clear_login_file(path) -> None:
-    path = path + "login.csv"
-    with open(path, "w") as file:
+def clear_login_file() -> None:
+    with open(USER_LOGINS, "w") as file:
         file.write("username,password\n")
 
 
-def clear_winners_file(path) -> None:
-    path = path + "winners.csv"
-    with open(path, "w") as file:
+def clear_winners_file() -> None:
+    with open(USER_SAVES, "w") as file:
         file.write("name,plays,wins,games,last_lvl_reached\n")
 
 
 def authentication() -> bool:
-    choice = input_check("Create an account or log in to an existing one", ["register", "login"])
+    text = "Create an account or log in to an existing one"
+    choice = input_check(text, ["register", "login"])
     auth = False
     match choice:
         case "register":
             register()
         case "login":
-            auth = login(path)
+            auth = login()
         case _:
             print("Something went wrong!!!!!!!")
 
@@ -191,23 +176,21 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     print(f"Category: {question_cat}")
     print(question_txt)
 
-    if question["correct_answer"] == "True":
-        question_bool = True
-    else:
-        question_bool = False
+    question_bool = question["correct_answer"] == "True"
 
     return question, question_bool
 
 
-def get_user(path) -> tuple[str, int, int, str, int]:
-    path = path + "winners.csv"
+def get_user(for_stats: bool = False) -> tuple[str, int, int, str, int | list[str]]:
     name = username
     plays = 0
     wins = 0
     games = ""
     last_lvl_reached = 0
+    other_user_data: list[str] = []
+    mr_return: tuple[str, int, int, str, int | list[str]]
 
-    with open(path, "r") as file:
+    with open(USER_SAVES, "r") as file:
         reader = csv.DictReader(file)
 
         for line in reader:
@@ -220,39 +203,41 @@ def get_user(path) -> tuple[str, int, int, str, int]:
                         temp += n[1]
                 other_user_data.append(temp)
                 continue
-            
+
             plays = int(line["plays"])
             wins = int(line["wins"])
             games = line["games"]
             last_lvl_reached = int(line["last_lvl_reached"])
 
-    return name, plays, wins, games, last_lvl_reached
+    if for_stats:
+        mr_return = (name, plays, wins, games, last_lvl_reached)
+    else:
+        mr_return = (name, plays, wins, games, other_user_data)
+
+    return mr_return
 
 
-def save_user(path, game: str, last_lvl_reached: int) -> None:
-    name, plays, wins, games, not_useful_now = get_user(path)
+def save_user(game: str, last_lvl_reached: int) -> None:
+    name, plays, wins, games, other_user_data = get_user()
     games += game
 
-    clear_winners_file(path)
-
-    path += "winners.csv"
+    clear_winners_file()
 
     if game == "T":
         wins += 1
     plays += 1
 
-
-    with open(path, "a") as file:
+    with open(USER_SAVES, "a") as file:
         for string in other_user_data:
             file.write(f"{string}\n")
         file.write(f"{name},{plays},{wins},{games},{last_lvl_reached}\n")
-        
 
 
 def competition() -> int:
-    questions = get_questions(path)
+    questions = get_questions()
     lvl = 1
-    os.system('cls' if os.name == 'nt' else 'clear')
+
+    clear_terminal()
 
     while lvl < 15:
         print(f"Lvl {lvl}")
@@ -260,33 +245,30 @@ def competition() -> int:
         questions[(lvl-1)//5].remove(pick)
 
         answer = input_check("True or False?", ["true", "false"])
-        if answer == "true":
-            answer = True
-        else:
-            answer = False
+        answer = answer == "true"
 
         if answer != question_bool:
             print(f"It was in fact not {answer}")
             break
-        
+
         print("That's right!")
         lvl += 1
-    
+        sleep(1)
+
     if lvl != 15:
         print("GG, better luck next time!!!")
-        save_user(path, "F", lvl)
+        save_user("F", lvl)
     else:
-        save_user(path, "T", lvl)
+        save_user("T", lvl)
         print("You won!!")
 
     return lvl
 
 
-def print_winners(path) -> None:
-    path = path + "winners.csv"
+def print_winners() -> None:
     winners: list[str] = []
 
-    with open(path, "r") as file:
+    with open(USER_SAVES, "r") as file:
         reader = csv.DictReader(file)
 
         for line in reader:
@@ -305,13 +287,15 @@ def print_winners(path) -> None:
         print("There are no winners yet! You can be the first!")
 
 
-def player_stats(path) -> None:
-    name, plays, wins, games, lats_lvl_reached = get_user(path)
+def player_stats() -> None:
+    name, plays, wins, games, last_lvl_reached = get_user(for_stats=True)
     plays_ot: list[int] = []
     wins_ot: list[int] = []
+    text1 = "You've either never played or played only once!!"
+    text2 = "Play a game or two to see some stats!!"
 
-    if plays == 0:
-        print("You've never played!! \nPlay a game or two to see some stats!!")
+    if plays <= 1:
+        print(f"{text1}\n{text2}")
         return None
 
     for i in range(len(games)):
@@ -323,12 +307,11 @@ def player_stats(path) -> None:
         else:
             wins_ot.append(wins_ot[-1] if game == "F" else wins_ot[-1] + 1)
 
-    print(plays_ot, wins_ot)
-
     winrate = wins/plays
     print(f"plays: {plays}")
     print(f"wins: {wins}")
     print(f"winrate: {round(winrate*100, 2)}%")
+    print(f"last_lvl_reached: lvl {last_lvl_reached}")
 
     plt.plot(plays_ot, wins_ot)
     plt.title("Your stats")
@@ -343,22 +326,24 @@ def statistics() -> None:
     choice = input_check("Your stats or game stats?", ["game", "user"])
 
     if choice == "user":
-        player_stats(path)
+        player_stats()
     else:
         get_graphs()
 
 
-def engine() -> None:
-    choice = input_check("Now the main part of the game", ["stats", "winners", "play", "exit"])
-    match choice:
+def engine() -> bool:
+    choices = ["stats", "winners", "play", "exit"]
+    user_choice = input_check("Main game menu", choices)
+    match user_choice:
         case "stats":
             statistics()
         case "winners":
-            print_winners(path)
+            print_winners()
         case "play":
             competition()
         case _:
-            return None
+            return False
+    return True
 
 
 def game() -> None:
@@ -366,9 +351,10 @@ def game() -> None:
 
     if auth:
         print("Welcome to cichnaonar!!!")
-        engine()
+        running = engine()
+        while running:
+            running = engine()
         print("Thanks for playing!!")
 
-#clear_login_file(path)
-#clear_winners_file(path)
+
 game()
