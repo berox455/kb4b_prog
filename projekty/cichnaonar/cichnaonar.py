@@ -2,8 +2,9 @@ import csv
 import random
 import matplotlib.pyplot as plt
 import os
-from helpful import input_check, clear_terminal
+from helpful import input_check, clear_terminal, hash_it
 from time import sleep
+from getpass import getpass
 
 USER_LOGINS = "login.csv"
 USER_SAVES = "winners.csv"
@@ -18,12 +19,9 @@ def write_user() -> bool:
         return False
 
     name, password = create_user()
-    print(f"name: {name}, password: {password}")
-    if input("Is this information correct? [y][n]\t").lower() != "y":
-        return False
 
     with open(USER_LOGINS, "a") as file:
-        file.write(f"{name},{password}\n")
+        file.write(f"{name},{hash_it(password)}\n")
     with open(USER_SAVES, "a") as file:
         file.write(f"{name},0,0,,0")
 
@@ -32,18 +30,18 @@ def write_user() -> bool:
 
 def create_user() -> tuple[str, str]:
     name = input("Enter a username: ")
-    p0, p1 = get_pass()
+    p0, p1 = get_user_pass()
     same_pass = p0 == p1
     while not same_pass:
         print("password are not the same, try again!")
-        p0, p1 = get_pass()
+        p0, p1 = get_user_pass()
         same_pass = p0 == p1
     return name, p0
 
 
-def get_pass() -> tuple[str, str]:
-    password = input("Enter a password: ")
-    password1 = input("Enter the password again: ")
+def get_user_pass() -> tuple[str, str]:
+    password =  getpass("Enter a password: ")
+    password1 = getpass("Enter the password again: ")
 
     return password, password1
 
@@ -56,7 +54,8 @@ def register() -> None:
 
 def login() -> bool:
     username = input("Enter your username: ")
-    password = input("Enter your password: ")
+    password = getpass("Enter your password: ")
+    password = hash_it(password)
 
     with open(USER_LOGINS, "r") as file:
         reader = csv.DictReader(file)

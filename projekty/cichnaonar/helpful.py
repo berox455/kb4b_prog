@@ -1,4 +1,5 @@
 import os
+import hashlib
 
 def input_check(message, choices):
     message_choices_print(message, choices)
@@ -30,3 +31,8 @@ def message_choices_print(message, choices):
 
 def clear_terminal() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def hash_it(string: str) -> str:
+    to_hash = bytes(string, encoding="utf-8")
+    return hashlib.sha256(to_hash).hexdigest()
