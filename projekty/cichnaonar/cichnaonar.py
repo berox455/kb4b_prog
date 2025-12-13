@@ -182,57 +182,52 @@ def pick_question(questions_from_difficulty: list) -> tuple[dict, bool]:
     return question, question_bool
 
 
-def get_user(for_stats: bool = False) -> tuple[str, int, int, str, int | list[str]]:
+def get_user() -> tuple[dict, list[dict]]:
+    user_data = {
+    "name":"",
+    "plays": 0,
+    "wins": 0,
+    "games": "",
+    "last_lvl_reached": 0
+    }
+    other_user_data: list[dict] = []
     with open(CURRENT_USER, "r") as file:
-        name = file.readline()
-    plays = 0
-    wins = 0
-    games = ""
-    last_lvl_reached = 0
-    other_user_data: list[str] = []
-    mr_return: tuple[str, int, int, str, int | list[str]]
+        user_data["name"] = file.readline()
 
     with open(USER_SAVES, "r") as file:
         reader = csv.DictReader(file)
 
         for line in reader:
-            if line["name"] != name:
-                temp = ""
-                for n in line:
-                    if n != line[0]:
-                        temp += "," + n[1]
-                    else:
-                        temp += n[1]
+            temp: dict = {}
+            temp["name"] = line["name"]
+            temp["plays"] = int(line["plays"])
+            temp["wins"] = int(line["wins"])
+            temp["games"] = line["games"]
+            temp["last_lvl_reached"] = int(line["last_lvl_reached"])
+            if line["name"] != user_data["name"]:
                 other_user_data.append(temp)
-                continue
+            else:
+                user_data = temp
 
-            plays = int(line["plays"])
-            wins = int(line["wins"])
-            games = line["games"]
-            last_lvl_reached = int(line["last_lvl_reached"])
-
-    if for_stats:
-        mr_return = (name, plays, wins, games, last_lvl_reached)
-    else:
-        mr_return = (name, plays, wins, games, other_user_data)
-
-    return mr_return
+    return user_data, other_user_data
 
 
 def save_user(game: str, last_lvl_reached: int) -> None:
-    name, plays, wins, games, other_user_data = get_user()
-    games += game
+    user_data, other_user_data = get_user()
+    user_data["games"] += game
 
-    clear_winners_file()
+    #clear_winners_file()
 
     if game == "T":
-        wins += 1
-    plays += 1
+        user_data["wins"] += 1
+    user_data["plays"] += 1
 
-    with open(USER_SAVES, "a") as file:
-        for string in other_user_data:
-            file.write(f"{string}\n")
-        file.write(f"{name},{plays},{wins},{games},{last_lvl_reached}\n")
+    with open(USER_SAVES, "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=["name","plays","wins","games","last_lvl_reached"])
+        writer.writeheader()
+        for line in other_user_data:
+            writer.writerow(line)
+        writer.writerow(user_data)
 
 
 def competition() -> None:
@@ -288,11 +283,14 @@ def print_winners() -> None:
 
 
 def player_stats() -> None:
-    name, plays, wins, games, last_lvl_reached = get_user(for_stats=True)
+    user_data, other_user_data = get_user()
     plays_ot: list[int] = []
     wins_ot: list[int] = []
     text1 = "You've either never played or played only once!!"
     text2 = "Play a game or two to see some stats!!"
+
+    name, plays, wins, games, last_lvl_reached = user_data.values()
+    print(name,plays,wins,games,last_lvl_reached)
 
     if plays <= 1:
         print(f"{text1}\n{text2}")
@@ -301,8 +299,8 @@ def player_stats() -> None:
     for i in range(len(games)):
         plays_ot.append(i + 1)
 
-    for game in games:
-        if game == games[0]:
+    for index, game in enumerate(games):
+        if index == 0:
             wins_ot.append(0 if game == "F" else 1)
         else:
             wins_ot.append(wins_ot[-1] if game == "F" else wins_ot[-1] + 1)
