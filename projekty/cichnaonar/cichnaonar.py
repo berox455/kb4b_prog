@@ -221,6 +221,8 @@ def save_user(game: str, last_lvl_reached: int) -> None:
         user_data["wins"] += 1
     user_data["plays"] += 1
 
+    user_data["last_lvl_reached"] = last_lvl_reached
+
     with open(USER_SAVES, "w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=["name","plays","wins","games","last_lvl_reached"])
         writer.writeheader()
@@ -256,7 +258,25 @@ def competition() -> None:
         save_user("F", lvl)
     else:
         save_user("T", lvl)
-        print("You won!!")
+
+        print("""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⡆⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀
+⠀⠀⠀⠠⢤⣦⠤⠀⠀⠉⢏⠀⠠⣤⣦⠄⠀⡸⠁⠀⠀⠀⣠⠹⠛⠏⠀⠀⠀⠀
+⠀⣠⠀⠀⠉⠈⠐⢄⠀⠀⠈⢆⠀⠉⡏⠀⠰⠁⠀⠀⠠⠊⠀⠀⠠⢤⣦⡤⠀⠀
+⠘⠛⠋⠒⠂⠤⢀⠀⠁⠀⣀⠀⠀⠀⠣⢤⣦⡤⠀⠁⠀⡀⠤⠒⠉⠈⠈⠁⠀⠀
+⠀⠀⢠⣶⡄⠀⣀⣀⠀⠙⠛⢋⡀⠀⠀⡸⠉⠁⠀⠀⣁⡀⠠⠤⠄⠾⠷⠂⠀⠀       
+,--.   ,--.,-----. ,--. ,--.    ,--.   ,--.,--.,--.  ,--. 
+ \  `.'  /'  .-.  '|  | |  |    |  |   |  ||  ||  ,'.|  | 
+  '.    / |  | |  ||  | |  |    |  |.'.|  ||  ||  |' '  | 
+    |  |  '  '-'  ''  '-'  '    |   ,'.   ||  ||  | `   | 
+    `--'   `-----'  `-----'     '--'   '--'`--'`--'  `--' 
+                    ⣀⣤⣀⢀⣀⣀⠀⠀⠀⠀⠀⠀⠈⠀⠐⠀⠀⠀⠁⢤⣶⡄⠀⠀⣀⣀⡀⣀⣠⣀
+                    ⠘⠉⠁⠀⠀⠀⢀⡠⠄⠂⠀⡠⠀⠀⠀⠐⢄⠀⠀⠂⠠⠄⣀⠀⠀⠀⠀⠘⠛⠃
+                    ⠀⠀⠀⣶⣶⠉⠁⠀⢀⣄⠞⠀⠀⠀⡄⠀⠀⠑⠄⡀⠀⠀⠀⠉⢳⣾⡖⠀⠀⠀
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠙⠛⠃⠀⠠⣴⣦⠄⠀⠈⠝⠛⠅⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                                          
+""")
 
 
 def print_winners() -> None:
