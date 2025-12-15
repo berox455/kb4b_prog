@@ -258,6 +258,7 @@ def competition() -> None:
         save_user("F", lvl)
     else:
         save_user("T", lvl)
+        clear_terminal()
 
         print("""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⡆⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀
@@ -309,7 +310,7 @@ def player_stats() -> None:
     text2 = "Play a game or two to see some stats!!"
 
     name, plays, wins, games, last_lvl_reached = user_data.values()
-    print(name,plays,wins,games,last_lvl_reached)
+    #print(name,plays,wins,games,last_lvl_reached)
 
     if plays <= 1:
         print(f"{text1}\n{text2}")
@@ -384,3 +385,5 @@ def game() -> None:
 
 
 game()
+  # add a partial input possibility to main menu and other choices
+  # test win
