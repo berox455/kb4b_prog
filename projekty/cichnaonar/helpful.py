@@ -2,13 +2,16 @@ import os
 import hashlib
 
 def input_check(message, choices):
+    new_choices = []
+    for choice in choices:
+        new_choices.append(choice[0])
     message_choices_print(message, choices)
 
-    user_input = input().lower()
-    while user_input not in choices:
+    user_input = input()[0].lower()
+    while user_input not in new_choices:
         print("bad input!!")
         message_choices_print(message, choices)
-        user_input = input().lower()
+        user_input = input()[0].lower()
     
     return user_input
 

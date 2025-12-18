@@ -155,9 +155,9 @@ def authentication() -> bool:
     choice = input_check(text, ["register", "login"])
     auth = False
     match choice:
-        case "register":
+        case "r":
             register()
-        case "login":
+        case "l":
             auth = login()
         case _:
             print("Something went wrong!!!!!!!")
@@ -351,7 +351,7 @@ def player_stats() -> None:
 def statistics() -> None:
     choice = input_check("Your stats or game stats?", ["game", "user"])
 
-    if choice == "user":
+    if choice == "user"[0]:
         player_stats()
     else:
         get_graphs()
@@ -361,11 +361,11 @@ def engine() -> bool:
     choices = ["stats", "winners", "play", "exit"]
     user_choice = input_check("Main game menu", choices)
     match user_choice:
-        case "stats":
+        case "s":
             statistics()
-        case "winners":
+        case "w":
             print_winners()
-        case "play":
+        case "p":
             competition()
         case _:
             return False
