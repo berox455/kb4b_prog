@@ -385,4 +385,3 @@ def game() -> None:
 
 
 game()
-  # remove impossible questions

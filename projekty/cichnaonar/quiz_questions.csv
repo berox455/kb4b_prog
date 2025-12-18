@@ -4,7 +4,7 @@ boolean,easy,General Knowledge,Jingle Bells was originally meant for Thanksgivin
 boolean,easy,General Knowledge,Nutella is produced by the German company Ferrero.,False
 boolean,medium,General Knowledge,"The bikini is named after the Bikini Atoll, an island where the United States conducted tests on atomic bombs.",True
 boolean,easy,General Knowledge,French is an official language in Canada.,True
-boolean,hard,General Knowledge,"In Scandinavian languages, the letter  means river.",True
+boolean,hard,General Knowledge,"In Scandinavian languages, the letter Å means river.",True
 boolean,hard,General Knowledge,This is the correct spelling of Supercalifragilisticexpialidocious.,True
 boolean,easy,General Knowledge,The mitochondria is the powerhouse of the cell.,True
 boolean,easy,General Knowledge,The Lego Group was founded in 1932.,True
@@ -46,7 +46,7 @@ boolean,easy,General Knowledge,"27 Club is a term used to refer to a list of fam
 boolean,easy,General Knowledge,Bulls are attracted to the color red.,False
 boolean,medium,General Knowledge,Instant mashed potatoes were invented by Canadian Edward Asselbergs in 1962.,True
 boolean,medium,General Knowledge,The pickled gherkin was first added to hamburgers because a US health law required all fast-food to include a source of Vitamin C.,False
-boolean,easy,General Knowledge,Adolf Hitler was born in Australia. ,False
+boolean,easy,General Knowledge,"Adolf Hitler was born in Australia. ",False
 boolean,easy,General Knowledge,The National Animal of Scotland is the Unicorn.,True
 boolean,medium,General Knowledge,The French word to travel is Travail,False
 boolean,hard,Entertainment: Books,"In Harry Potter and the Deathly Hallows, Hermione destroyed the fourth Horcrux by stabbing it with the Sword of Gryffindor.",False
@@ -74,7 +74,7 @@ boolean,easy,Entertainment: Film,Actor Tommy Chong served prison time.,True
 boolean,easy,Entertainment: Film,"Minions was released on the June 10th, 2015.",False
 boolean,easy,Entertainment: Film,Matt Damon played an astronaut stranded on an extraterrestrial planet in both of the movies Interstellar and The Martian.,True
 boolean,easy,Entertainment: Film,"In the original Star Wars trilogy, David Prowse was the actor who physically portrayed Darth Vader.",True
-boolean,easy,Entertainment: Film,In Alfred Hitchcocks film Psycho it is said he used chocolate syrup to simulate the blood in the famous shower scene from ,True
+boolean,easy,Entertainment: Film,"In Alfred Hitchcocks film Psycho it is said he used chocolate syrup to simulate the blood in the famous shower scene from ",True
 boolean,medium,Entertainment: Film,The Xenomorph from the science fiction film Alien has acidic blood.,True
 boolean,medium,Entertainment: Film,There arent any live-action clones in Star Wars: Episode III - Revenge of the Sith.,True
 boolean,easy,Entertainment: Film,"In the movie The Revenant, DiCaprios character hunts down the killer of his son.",True
@@ -204,7 +204,7 @@ boolean,medium,Geography,Antarctica is the largest desert in the world.,True
 boolean,medium,Geography,The Sonoran Desert is located in eastern Africa.,False
 boolean,medium,Geography,The capital of the US State Ohio is the city of Chillicothe.,False
 boolean,medium,Geography,Is Tartu the capital of Estonia?,False
-boolean,hard,Geography,The two largest ethnic groups of Belgium are Flemish and Walloon. ,True
+boolean,hard,Geography,"The two largest ethnic groups of Belgium are Flemish and Walloon. ",True
 boolean,easy,Geography,Greenland is covered with grass and Iceland covered with ice.,False
 boolean,easy,Geography,Nova Scotia is on the east coast of Canada.,True
 boolean,easy,Geography,There are no deserts in Europe.,True
@@ -234,7 +234,7 @@ boolean,medium,Geography,The flag of South Africa features 7 colours.,False
 boolean,easy,Geography,Greenland is almost as big as Africa.,False
 boolean,easy,Geography,Toronto is the capital city of the North American country of Canada.,False
 boolean,medium,Geography,"The longest place named in the United States is Lake Chargoggagoggmanchauggagoggchaubunagungamaugg, located near Webster, MA.",True
-boolean,medium,Geography,Vietnam is the only country in the world that starts with V. ,False
+boolean,medium,Geography,"Vietnam is the only country in the world that starts with V. ",False
 boolean,easy,Geography,The Republic of Malta is the smallest microstate worldwide.,False
 boolean,medium,Geography,The surface area of Russia is slightly larger than that of the dwarf planet Pluto.,True
 boolean,hard,Geography,Only one country in the world starts with the letter Q.,True
@@ -245,7 +245,7 @@ boolean,easy,History,Former United States Presidents John Adams and Thomas Jeffe
 boolean,hard,History,Japan was part of the Allied Powers during World War I.,True
 boolean,easy,History,"In World War ll, Great Britian used inflatable tanks on the ports of Great Britain to divert Hitler away from Normandy/D-day landing.",True
 boolean,easy,History,Thomas Crapper was a plumber who invented the flushing toilet.,False
-boolean,medium,History,Abraham Lincoln was the first U.S. President to be born outside the borders of the thirteen original states. ,True
+boolean,medium,History,"Abraham Lincoln was the first U.S. President to be born outside the borders of the thirteen original states. ",True
 boolean,easy,History,Adolf Hitler was tried at the Nuremberg trials.,False
 boolean,medium,History,"Sir Issac Newton served as a Member of Parliament, but the only recorded time he spoke was to complain about a draft in the chambers.",True
 boolean,medium,History,The M41 Walker Bulldog remains in service in some countries to this day.,True
