@@ -385,5 +385,4 @@ def game() -> None:
 
 
 game()
-  # add a partial input possibility to main menu and other choices
-  # test win
+  # remove impossible questions
