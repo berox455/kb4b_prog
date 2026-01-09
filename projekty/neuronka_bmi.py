@@ -23,7 +23,7 @@ Y_test = Y[round(0.8*len(Y)):]
 neuronka = MLPClassifier(
     hidden_layer_sizes=(5,4,2),
     activation="relu",
-    max_iter=1_000
+    max_iter=5_000
 )
 
 neuronka.fit(X_train, Y_train)
