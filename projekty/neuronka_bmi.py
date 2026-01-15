@@ -21,19 +21,20 @@ Y_test = Y[round(0.8*len(Y)):]
 
 
 neuronka = MLPClassifier(
-    hidden_layer_sizes=(5,4,2),
+    hidden_layer_sizes=(6,3),
     activation="relu",
-    max_iter=5_000
+    max_iter=5000,
+    random_state=6
 )
 
 neuronka.fit(X_train, Y_train)
 
 prediction = neuronka.predict(X_test)
-pocet = len(prediction)
+number = len(prediction)
 
 correct = 0
-for i in range(pocet):
-    if prediction[i] == Y_test[i]:
+for i in range(number):
+    if Y_test[i] == prediction[i]:
         correct += 1
 
-print(f"Right answers: {round(correct/pocet)*100}%")
+print(f"Right answers: {round(correct/number, 1)*100}%")
