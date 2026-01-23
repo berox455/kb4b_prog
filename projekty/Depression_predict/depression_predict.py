@@ -32,7 +32,7 @@ with open(data, "r") as file:
         X.append([
             age, 
             academic_pressure, 
-            CGPA, 
+            #CGPA, 
             study_satisfaction, 
             sleep_duration,
             dietary_habits,
@@ -56,7 +56,7 @@ train_X, test_X, train_Y, test_Y  = train_test_split(
 
 # ---------- Neuronová síť ----------
 neural_network = MLPClassifier(
-    hidden_layer_sizes=(16, 8, 4),
+    hidden_layer_sizes=(4),#16,8,4),
     activation="relu",
     max_iter=2000,
     verbose=True,
