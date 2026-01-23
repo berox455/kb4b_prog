@@ -1,0 +1,20 @@
+Male - 0
+Female - 1
+
+family history  no - 0
+                yes - 1
+(of depression)
+
+suicidal thoughts   no - 0
+                    yes - 1
+
+Dietary habits  unhealthy - 0
+                moderate - 1
+                healthy - 2
+
+sleep duration  less than 5 hours - 0
+                5 - 6 hours - 1
+                7 - 8 hours - 2
+                more than 8 hours - 3
+
+CGPA - Grade Point Average or other academic scores
