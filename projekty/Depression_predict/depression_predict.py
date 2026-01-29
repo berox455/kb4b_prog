@@ -2,6 +2,7 @@
 # Jedná se pouze o učební ukázku - pro BMi je jinak využití neuronky nevhodné
 
 import csv
+import random
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
@@ -12,6 +13,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 X = []  # = vstupy
 Y = []  # = výstupy
 data = "projekty/Depression_predict/student_depression_dataset.csv"
+
 
 with open(data, "r") as file:
     reader = csv.DictReader(file)
@@ -46,17 +48,17 @@ with open(data, "r") as file:
 
 # ---------- Rozdělení na trénování a testování ----------
 rows = len(X)
-split = round(0.8 * rows)
+split = round(0.9 * rows)
 
 train_X, test_X, train_Y, test_Y  = train_test_split(
         X, Y,
-        test_size=0.2,
+        test_size=0.1,
         #random_state=4
         )
 
 # ---------- Neuronová síť ----------
 neural_network = MLPClassifier(
-    hidden_layer_sizes=(4),#16,8,4),
+    hidden_layer_sizes=(8, 4),#16,8,4),
     activation="relu",
     max_iter=2000,
     verbose=True,
