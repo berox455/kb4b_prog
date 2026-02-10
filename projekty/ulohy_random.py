@@ -779,3 +779,5 @@ game()
 #in pokersim change in func flushstraigh and hcptf when looping through thp loop in thplist_value instead
 #because you don't have to then use self.get_value so many times and 
 #the code will be better and more beautiful and also shorter i think
+
+
